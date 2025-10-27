@@ -50,7 +50,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl arcade-glow text-primary mb-4">
+          <h1 className="text-4xl md:text-6xl text-primary mb-4">
             DEVTRIVIA
           </h1>
           <p className="text-lg text-muted-foreground">
@@ -61,7 +61,7 @@ const Login = () => {
         <ArcadeCard>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl arcade-glow text-secondary">
+              <h2 className="text-2xl text-secondary">
                 {isLogin ? 'LOGIN' : 'SIGN UP'}
               </h2>
             </div>

@@ -16,7 +16,7 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-2xl arcade-glow text-primary animate-blink">LOADING...</h2>
+        <h2 className="text-2xl text-primary animate-blink">LOADING...</h2>
       </div>
     );
   }

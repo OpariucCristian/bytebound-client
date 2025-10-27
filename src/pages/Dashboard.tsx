@@ -17,7 +17,7 @@ const Dashboard = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl md:text-5xl arcade-glow text-primary">
+          <h1 className="text-3xl md:text-5xl text-primary">
             DEVTRIVIA
           </h1>
           <ArcadeButton variant="danger" size="sm" onClick={logout}>
@@ -26,18 +26,18 @@ const Dashboard = () => {
         </div>
 
         {/* Player Stats */}
-        <ArcadeCard glow className="mb-8">
+        <ArcadeCard glow={false} className="mb-8">
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-muted-foreground text-sm">PLAYER</p>
-                <h2 className="text-2xl arcade-glow text-secondary">
+                <h2 className="text-2xl text-secondary">
                   {user.username}
                 </h2>
               </div>
               <div className="text-right">
                 <p className="text-muted-foreground text-sm">LEVEL</p>
-                <h2 className="text-4xl arcade-glow text-accent">
+                <h2 className="text-4xl text-accent">
                   {user.level}
                 </h2>
               </div>
@@ -69,7 +69,7 @@ const Dashboard = () => {
         {/* Main Menu */}
         <ArcadeCard>
           <div className="text-center space-y-6">
-            <h3 className="text-2xl arcade-glow text-primary mb-8">
+            <h3 className="text-2xl text-primary mb-8">
               MAIN MENU
             </h3>
 

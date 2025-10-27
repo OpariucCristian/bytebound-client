@@ -21,10 +21,10 @@ export const ArcadeButton = ({
   type = 'button',
 }: ArcadeButtonProps) => {
   const variantStyles = {
-    primary: 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary',
-    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 border-secondary',
-    accent: 'bg-accent text-accent-foreground hover:bg-accent/90 border-accent',
-    danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive',
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90 border-border',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 border-border',
+    accent: 'bg-accent text-accent-foreground hover:bg-accent/90 border-border',
+    danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border-border',
   };
 
   const sizeStyles = {
@@ -39,9 +39,9 @@ export const ArcadeButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'font-pixel border-4 arcade-glow transition-all duration-150',
+        'font-pixel border-3 transition-all duration-150',
         'active:translate-y-1 active:shadow-none',
-        'shadow-[0_6px_0_0_currentColor]',
+        'shadow-[0_4px_0_0_hsl(var(--border))]',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantStyles[variant],
         sizeStyles[size],

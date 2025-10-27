@@ -20,7 +20,7 @@ const CategorySelect = () => {
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl md:text-4xl arcade-glow text-primary">
+          <h1 className="text-2xl md:text-4xl text-primary">
             SELECT CATEGORY
           </h1>
           <ArcadeButton variant="secondary" size="sm" onClick={() => navigate('/')}>
@@ -35,12 +35,12 @@ const CategorySelect = () => {
                 onClick={() => handleCategorySelect(category.id)}
                 className="w-full text-center space-y-4 p-4"
               >
-                <div className={`text-4xl arcade-glow ${category.color}`}>
+                <div className={`text-4xl ${category.color}`}>
                   {category.id === 'data-structures' && '🔢'}
                   {category.id === 'typescript' && '💎'}
                   {category.id === 'csharp' && '⚡'}
                 </div>
-                <h3 className={`text-xl arcade-glow ${category.color}`}>
+                <h3 className={`text-xl ${category.color}`}>
                   {category.name}
                 </h3>
               </button>
@@ -51,7 +51,7 @@ const CategorySelect = () => {
         <div className="mt-12">
           <ArcadeCard>
             <div className="text-center space-y-4">
-              <h4 className="text-lg arcade-glow text-secondary">
+              <h4 className="text-lg text-secondary">
                 CATEGORY INFO
               </h4>
               <p className="text-sm text-muted-foreground">

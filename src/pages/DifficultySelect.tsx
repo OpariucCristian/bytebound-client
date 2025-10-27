@@ -28,7 +28,7 @@ const DifficultySelect = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl md:text-4xl arcade-glow text-primary">
+            <h1 className="text-2xl md:text-4xl text-primary">
               SELECT DIFFICULTY
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -47,7 +47,7 @@ const DifficultySelect = () => {
                 onClick={() => handleDifficultySelect(difficulty.id)}
                 className="w-full text-center space-y-4 p-4"
               >
-                <h3 className={`text-2xl arcade-glow ${difficulty.color}`}>
+                <h3 className={`text-2xl ${difficulty.color}`}>
                   {difficulty.name}
                 </h3>
                 <div className="text-4xl">
@@ -66,7 +66,7 @@ const DifficultySelect = () => {
         <div className="mt-12">
           <ArcadeCard>
             <div className="text-center space-y-4">
-              <h4 className="text-lg arcade-glow text-secondary">
+              <h4 className="text-lg text-secondary">
                 DIFFICULTY INFO
               </h4>
               <div className="text-sm text-muted-foreground space-y-2">

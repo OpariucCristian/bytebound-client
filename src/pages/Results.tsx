@@ -49,7 +49,7 @@ const Results = () => {
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl arcade-glow text-primary mb-4">
+          <h1 className="text-4xl md:text-6xl text-primary mb-4">
             GAME OVER
           </h1>
           <p className="text-xl text-secondary">
@@ -58,10 +58,10 @@ const Results = () => {
         </div>
 
         {/* Results Card */}
-        <ArcadeCard glow className="mb-8">
+        <ArcadeCard glow={false} className="mb-8">
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-5xl arcade-glow text-accent mb-2">
+              <h2 className="text-5xl text-accent mb-2">
                 +{stats.totalXp} XP
               </h2>
               <p className="text-muted-foreground">TOTAL EARNED</p>
@@ -90,7 +90,7 @@ const Results = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-muted-foreground text-sm">NEW LEVEL</p>
-                  <p className="text-3xl arcade-glow text-accent">{user.level}</p>
+                  <p className="text-3xl text-accent">{user.level}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-muted-foreground text-sm">TOTAL XP</p>
@@ -104,7 +104,7 @@ const Results = () => {
         {/* Performance Message */}
         <ArcadeCard className="mb-8">
           <div className="text-center">
-            <h3 className="text-2xl arcade-glow text-secondary mb-4">
+            <h3 className="text-2xl text-secondary mb-4">
               {accuracy >= 80 ? '🏆 EXCELLENT!' : accuracy >= 60 ? '👍 GOOD JOB!' : '💪 KEEP TRYING!'}
             </h3>
             <p className="text-foreground">

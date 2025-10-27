@@ -109,7 +109,7 @@ const Game = () => {
   if (loading || questions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-2xl arcade-glow text-primary animate-blink">LOADING...</h2>
+        <h2 className="text-2xl text-primary animate-blink">LOADING...</h2>
       </div>
     );
   }
@@ -131,7 +131,7 @@ const Game = () => {
           </div>
           <div className="text-right">
             <p className="text-muted-foreground text-sm">STREAK</p>
-            <p className="text-2xl arcade-glow text-accent">{stats.streak}</p>
+            <p className="text-2xl text-accent">{stats.streak}</p>
             {stats.streak >= 3 && (
               <p className="text-xs text-secondary">x{multiplier} MULTIPLIER!</p>
             )}
@@ -139,7 +139,7 @@ const Game = () => {
         </div>
 
         {/* Question */}
-        <ArcadeCard glow className="mb-6">
+        <ArcadeCard glow={false} className="mb-6">
           <h2 className="text-lg md:text-xl text-foreground leading-relaxed">
             {currentQuestion.question}
           </h2>
@@ -191,7 +191,7 @@ const Game = () => {
         <Dialog open={showExplanation} onOpenChange={setShowExplanation}>
           <DialogContent className="arcade-border bg-card">
             <DialogHeader>
-              <DialogTitle className="text-2xl arcade-glow text-destructive">
+              <DialogTitle className="text-2xl text-destructive">
                 WRONG ANSWER!
               </DialogTitle>
               <DialogDescription className="text-foreground mt-4 space-y-4">
