@@ -2,13 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* App design system in HSL
 */
 
 @layer base {
   :root {
-    /* Retro Pixel Theme - Cleaner, More Readable */
     --background: 0 0% 13%;
     --foreground: 0 0% 98%;
 

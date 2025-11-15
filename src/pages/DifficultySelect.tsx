@@ -1,7 +1,14 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArcadeButton } from '@/components/ArcadeButton';
 import { ArcadeCard } from '@/components/ArcadeCard';
-import { Difficulty, mockQuestionService } from '@/services/mockQuestionService';
+
+type Difficulty = 'short' | 'medium' | 'long';
+
+const categoryNames: Record<string, string> = {
+  dsa: 'Data Structures & Algorithms',
+  typescript: 'TypeScript',
+  csharp: 'C#',
+};
 
 const DifficultySelect = () => {
   const navigate = useNavigate();
@@ -32,11 +39,11 @@ const DifficultySelect = () => {
               SELECT DIFFICULTY
             </h1>
             <p className="text-muted-foreground mt-2">
-              Category: {mockQuestionService.getCategoryName(category as any)}
+              Category: {categoryNames[category] || category}
             </p>
           </div>
           <ArcadeButton variant="secondary" size="sm" onClick={() => navigate('/category')}>
-            ← BACK
+           BACK
           </ArcadeButton>
         </div>
 

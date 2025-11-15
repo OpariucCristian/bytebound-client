@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 interface ArcadeButtonProps {
@@ -40,7 +40,7 @@ export const ArcadeButton = ({
       disabled={disabled}
       className={cn(
         'font-pixel border-3 transition-all duration-150',
-        'active:translate-y-1 active:shadow-none',
+        'active:translate-y-1 active:shadow-none active:brightness-75',
         'shadow-[0_4px_0_0_hsl(var(--border))]',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantStyles[variant],

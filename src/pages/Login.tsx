@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { ArcadeButton } from '@/components/ArcadeButton';
 import { ArcadeCard } from '@/components/ArcadeCard';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
 import { toast } from '@/hooks/use-toast';
 
 const Login = () => {
@@ -22,19 +22,34 @@ const Login = () => {
 
     try {
       if (isLogin) {
-        await login(email, password);
+        const loggedInUser = await login(email, password);
         toast({
-          title: '🎮 LOGIN SUCCESSFUL',
-          description: 'Welcome back, player!',
+          title: 'LOGIN SUCCESSFUL',
+          description: `Welcome back, ${loggedInUser?.user_metadata.username || 'player'}!`,
         });
+        navigate('/');
       } else {
-        await signup(email, username, password);
-        toast({
-          title: '🎮 ACCOUNT CREATED',
-          description: 'Ready to play!',
-        });
+        const result = await signup(email, username, password);
+        
+        if (result.needsEmailConfirmation) {
+          toast({
+            title: '📧 CHECK YOUR EMAIL',
+            description: 'Please confirm your email to continue',
+          });
+          navigate('/email-confirmation', { 
+            state: { 
+              email: result.email,
+              password: password
+            } 
+          });
+        } else {
+          toast({
+            title: '🎮 ACCOUNT CREATED',
+            description: 'Ready to play!',
+          });
+          navigate('/');
+        }
       }
-      navigate('/');
     } catch (error) {
       toast({
         title: '❌ ERROR',
@@ -47,12 +62,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-primary mb-4">
-            DEVTRIVIA
-          </h1>
+          <img src='/resources/images/login.png' className="text-4xl md:text-6xl text-primary " />
+          
           <p className="text-lg text-muted-foreground">
             LEVEL UP YOUR SKILLS
           </p>
@@ -61,7 +75,7 @@ const Login = () => {
         <ArcadeCard>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl text-secondary">
+              <h2 className="text-2xl">
                 {isLogin ? 'LOGIN' : 'SIGN UP'}
               </h2>
             </div>
@@ -125,7 +139,7 @@ const Login = () => {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="w-full text-center text-accent hover:text-accent/80 text-sm"
+              className="w-full text-center  hover:text-primary/80 text-sm"
             >
               {isLogin ? 'New player? Sign up' : 'Already have account? Login'}
             </button>

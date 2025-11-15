@@ -1,60 +1,42 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { ArcadeButton } from '@/components/ArcadeButton';
-import { ArcadeCard } from '@/components/ArcadeCard';
-import { mockAuthService } from '@/services/mockAuthService';
-import { mockQuestionService, Category, Difficulty } from '@/services/mockQuestionService';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { ArcadeButton } from "@/components/ArcadeButton";
+import { ArcadeCard } from "@/components/ArcadeCard";
+import { usePlayerByUid, Player, useGameMutations } from "@/hooks";
 
 interface LocationState {
-  stats: {
-    correct: number;
-    wrong: number;
-    streak: number;
-    maxStreak: number;
-    totalXp: number;
-  };
-  category: Category;
-  difficulty: Difficulty;
+  gameId: string;
+  mode: string;
 }
 
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
+  const playerData: Player = usePlayerByUid(user?.id || "");
+
   const state = location.state as LocationState;
 
+  const { data: gameStats } = useGameMutations().getGameStats(
+    state?.gameId || ""
+  );
+  console.log("Game Stats:", gameStats);
   useEffect(() => {
     if (!state || !user) {
-      navigate('/');
+      navigate("/");
       return;
     }
-
-    // Update user XP
-    const updateXp = async () => {
-      const updatedUser = await mockAuthService.updateUserProgress(state.stats.totalXp);
-      updateUser(updatedUser);
-    };
-
-    updateXp();
   }, [state, user, navigate, updateUser]);
 
   if (!state || !user) return null;
-
-  const { stats, category, difficulty } = state;
-  const totalQuestions = stats.correct + stats.wrong;
-  const accuracy = Math.round((stats.correct / totalQuestions) * 100);
 
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-primary mb-4">
-            GAME OVER
-          </h1>
-          <p className="text-xl text-secondary">
-            {mockQuestionService.getCategoryName(category)} - {difficulty.toUpperCase()}
-          </p>
+          <h1 className="text-4xl md:text-6xl text-primary mb-4">GAME OVER</h1>
+          <p className="text-xl text-secondary"></p>
         </div>
 
         {/* Results Card */}
@@ -62,26 +44,30 @@ const Results = () => {
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-5xl text-accent mb-2">
-                +{stats.totalXp} XP
+                +{gameStats?.xpGained} XP
               </h2>
               <p className="text-muted-foreground">TOTAL EARNED</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t-2 border-border">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-6 border-t-2 border-border">
               <div className="text-center">
-                <p className="text-3xl text-neon-green">{stats.correct}</p>
-                <p className="text-muted-foreground text-sm">CORRECT</p>
+                <p className="text-3xl text-neon-green">
+                  {gameStats?.correctAnswers}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  QUESTIONS ANSWERED
+                </p>
               </div>
               <div className="text-center">
-                <p className="text-3xl text-destructive">{stats.wrong}</p>
-                <p className="text-muted-foreground text-sm">WRONG</p>
+                <p className="text-3xl text-destructive">
+                  {gameStats?.wrongAnswers}
+                </p>
+                <p className="text-muted-foreground text-sm">WRONG ANSWERS</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl text-primary">{accuracy}%</p>
-                <p className="text-muted-foreground text-sm">ACCURACY</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl text-secondary">{stats.maxStreak}</p>
+                <p className="text-3xl text-secondary">
+                  {gameStats?.correctAnswersMaxStreak}
+                </p>
                 <p className="text-muted-foreground text-sm">MAX STREAK</p>
               </div>
             </div>
@@ -90,11 +76,11 @@ const Results = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-muted-foreground text-sm">NEW LEVEL</p>
-                  <p className="text-3xl text-accent">{user.level}</p>
+                  <p className="text-3xl text-accent">{playerData.lvl}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-muted-foreground text-sm">TOTAL XP</p>
-                  <p className="text-2xl text-foreground">{user.totalXp}</p>
+                  <p className="text-2xl text-foreground">{playerData.xp}</p>
                 </div>
               </div>
             </div>
@@ -105,14 +91,18 @@ const Results = () => {
         <ArcadeCard className="mb-8">
           <div className="text-center">
             <h3 className="text-2xl text-secondary mb-4">
-              {accuracy >= 80 ? '🏆 EXCELLENT!' : accuracy >= 60 ? '👍 GOOD JOB!' : '💪 KEEP TRYING!'}
+              {gameStats?.correctAnswers >= 10
+                ? "EXCELLENT!"
+                : gameStats?.correctAnswers >= 5
+                ? "GOOD JOB!"
+                : "KEEP TRYING!"}
             </h3>
             <p className="text-foreground">
-              {accuracy >= 80 
-                ? 'You\'re a true master! Keep up the amazing work!'
-                : accuracy >= 60
-                ? 'You\'re getting better! Practice makes perfect!'
-                : 'Don\'t give up! Every game makes you stronger!'}
+              {gameStats?.correctAnswers >= 10
+                ? `You answered ${gameStats?.correctAnswers} questions correctly! You're a true master!`
+                : gameStats?.correctAnswers >= 5
+                ? `${gameStats?.correctAnswers} correct answers! You're getting better! Practice makes perfect!`
+                : `You got ${gameStats?.correctAnswers} correct. Don't give up! Every game makes you stronger!`}
             </p>
           </div>
         </ArcadeCard>
@@ -122,18 +112,18 @@ const Results = () => {
           <ArcadeButton
             variant="primary"
             size="lg"
-            onClick={() => navigate('/category')}
+            onClick={() => navigate("/category")}
             className="w-full"
           >
-            ► PLAY AGAIN
+            PLAY AGAIN
           </ArcadeButton>
           <ArcadeButton
             variant="secondary"
             size="lg"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="w-full"
           >
-            ← MAIN MENU
+            MAIN MENU
           </ArcadeButton>
         </div>
       </div>

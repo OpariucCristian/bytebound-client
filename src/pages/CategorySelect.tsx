@@ -1,19 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { ArcadeButton } from '@/components/ArcadeButton';
 import { ArcadeCard } from '@/components/ArcadeCard';
-import { Category } from '@/services/mockQuestionService';
+
+type Category = 'dsa' | 'typescript' | 'csharp';
 
 const CategorySelect = () => {
   const navigate = useNavigate();
 
   const categories: Array<{ id: Category; name: string; color: string }> = [
-    { id: 'data-structures', name: 'DATA STRUCTURES', color: 'text-primary' },
-    { id: 'typescript', name: 'TYPESCRIPT', color: 'text-secondary' },
-    { id: 'csharp', name: 'C#', color: 'text-accent' },
+    { id: 'dsa', name: 'DATA STRUCTURES', color: 'text-primary' }
   ];
 
   const handleCategorySelect = (category: Category) => {
-    navigate(`/difficulty?category=${category}`);
+    navigate(`/game?category=${category}&mode=endless`);
   };
 
   return (
@@ -24,7 +23,7 @@ const CategorySelect = () => {
             SELECT CATEGORY
           </h1>
           <ArcadeButton variant="secondary" size="sm" onClick={() => navigate('/')}>
-            ← BACK
+           BACK
           </ArcadeButton>
         </div>
 
@@ -36,9 +35,6 @@ const CategorySelect = () => {
                 className="w-full text-center space-y-4 p-4"
               >
                 <div className={`text-4xl ${category.color}`}>
-                  {category.id === 'data-structures' && '🔢'}
-                  {category.id === 'typescript' && '💎'}
-                  {category.id === 'csharp' && '⚡'}
                 </div>
                 <h3 className={`text-xl ${category.color}`}>
                   {category.name}
@@ -52,11 +48,11 @@ const CategorySelect = () => {
           <ArcadeCard>
             <div className="text-center space-y-4">
               <h4 className="text-lg text-secondary">
-                CATEGORY INFO
+                ENDLESS MODE
               </h4>
               <p className="text-sm text-muted-foreground">
-                Each category tests different aspects of development knowledge.
-                Choose wisely and prove your expertise!
+                Answer as many questions as you can! You have 3 lives.
+                Each wrong answer costs a life. Game ends when you run out of lives.
               </p>
             </div>
           </ArcadeCard>
