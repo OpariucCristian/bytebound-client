@@ -5,7 +5,7 @@ import { ArcadeCard } from "@/components/ArcadeCard";
 import BattleScene from "@/components/BattleScene/BattleScene";
 import { ReadNewGameDto, type QuestionPoolDto } from "@/hooks/useGame";
 import { useAuth } from "@/contexts/AuthContext";
-import { shuffleArray } from "@/utils/gameUtils";
+import { getDifficultColor, shuffleArray } from "@/utils/gameUtils";
 import { useGameMutations, useGetNextQuestion } from "@/hooks";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
 
@@ -107,7 +107,7 @@ const Game = () => {
 
   useEffect(() => {
     if (questionCountDown <= 0 && game?.id) {
-      // Time's up - treat as incorrect answer
+      // Time's up, treat as incorrect answer
       handleAnswerSelect(-1, true);
     }
   }, [questionCountDown, game?.id]);
@@ -132,7 +132,6 @@ const Game = () => {
       }
 
       if (isCorrect) {
-        // Trigger player attack animation
         setBattleAction(BattleActionEnum.PLAYER_ATTACK);
 
         const newStreak = stats.streak + 1;
@@ -264,7 +263,7 @@ const Game = () => {
               }`}
             >
               <div className="w-40">
-                <p className="text-muted-foreground text-sm">ENDLESS MODE</p>
+                <p className="text-muted-foreground text-sm">ENDLESS</p>
                 <div className="flex gap-2 mt-2">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} title={`Life ${i + 1}`}>
@@ -298,10 +297,15 @@ const Game = () => {
                   {questionCountDown}
                 </p>
               </div>
-              <div className="text-right w-40">
+               <div className="text-center w-40">
                 <p className="text-muted-foreground text-sm">STREAK</p>
                 <p className="text-2xl text-accent">{stats.streak}</p>
               </div>
+                <div className="text-right w-40">
+                <p className="text-muted-foreground text-sm">DIFFICULTY</p>
+                <p className={`text-2xl text-${getDifficultColor(currentQuestion.difficulty)}`}>{currentQuestion.difficulty}</p>
+              </div>
+             
             </div>
             {/* Question */}
             <ArcadeCard

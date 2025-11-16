@@ -2,11 +2,11 @@ import { CharacterSprites } from "@/types/characterTypes";
 
 const PLAYER_SPRITES: CharacterSprites = {
   IDLE: { frames: 7, src: "/resources/knight/IDLE.png" },
-  ATTACK_1: { frames: 6, src: "/resources/knight/ATTACK1.png" },
-  ATTACK_2: { frames: 5, src: "/resources/knight/ATTACK2.png" },
-  ATTACK_3: { frames: 6, src: "/resources/knight/ATTACK3.png" },
-  HURT: { frames: 4, src: "/resources/knight/HURT.png" },
-  DEATH: { frames: 12, src: "/resources/knight/DEATH.png" },
+  ATTACK_1: { frames: 6, src: "/resources/knight/ATTACK1.png", sound: "/resources/knight/sounds/ATTACK1.wav" },
+  ATTACK_2: { frames: 5, src: "/resources/knight/ATTACK2.png", sound: "/resources/knight/sounds/ATTACK2.wav" },
+  ATTACK_3: { frames: 6, src: "/resources/knight/ATTACK3.png", sound: "/resources/knight/sounds/ATTACK3.wav" },
+  HURT: { frames: 4, src: "/resources/knight/HURT.png", sound: "/resources/knight/sounds/HURT.wav" },
+  DEATH: { frames: 12, src: "/resources/knight/DEATH.png", sound: "/resources/knight/sounds/DEATH.mp3" },
   WALK: { frames: 8, src: "/resources/knight/RUN.png" },
 };
 

@@ -15,4 +15,5 @@ export interface CharacterSprites {
 export interface SpriteConfig {
   frames: number;
   src: string;
+  sound?: string;
 }

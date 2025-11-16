@@ -11,6 +11,10 @@ import CategorySelect from "./pages/CategorySelect";
 import Game from "./pages/Game";
 import Results from "./pages/Results";
 import NotFound from "./pages/NotFound";
+import { MusicProvider } from "./contexts/MusicContext";
+import { AudioButton } from "./components/ui/AudioButton";
+import { AudioProvider } from "./contexts/AudioContext";
+import { SoundEffectProvider } from "./contexts/SoundEffectContext";
 
 const queryClient = new QueryClient();
 
@@ -18,19 +22,29 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/email-confirmation" element={<EmailConfirmation />} />
-            <Route path="/category" element={<CategorySelect />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/results" element={<Results />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <AudioProvider>
+          <MusicProvider>
+            <SoundEffectProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route
+                    path="/email-confirmation"
+                    element={<EmailConfirmation />}
+                  />
+                  <Route path="/category" element={<CategorySelect />} />
+                  <Route path="/game" element={<Game />} />
+                  <Route path="/results" element={<Results />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <AudioButton />
+              </BrowserRouter>
+            </SoundEffectProvider>
+          </MusicProvider>
+        </AudioProvider>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>

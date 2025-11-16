@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
 import { CharacterSprites } from "@/types/characterTypes";
 import { useSpriteAnimation } from "@/hooks/useSpriteAnimation";
+import { useSoundEffect } from "@/contexts/SoundEffectContext";
+import { useMusic } from "@/contexts/MusicContext";
 
 interface PlayerProps {
   action: BattleAction;
@@ -29,6 +31,9 @@ export default function Player({
     initialSprite: "WALK",
   });
 
+  const { playSoundEffect } = useSoundEffect();
+  const { stopMusic } = useMusic();
+
   useEffect(() => {
     switch (action) {
       case BattleActionEnum.START_GAME:
@@ -46,15 +51,25 @@ export default function Player({
         const randomAttack =
           attackSprites[Math.floor(Math.random() * attackSprites.length)];
         updateSpriteAnimation(randomAttack);
+        if (randomAttack?.sound) {
+          playSoundEffect(randomAttack.sound);
+        }
         return;
       case BattleActionEnum.ENEMY_ATTACK:
         updateSpriteAnimation(sprites.HURT);
+        if (sprites.HURT.sound) {
+          playSoundEffect(sprites.HURT.sound);
+        }
         return;
       case BattleActionEnum.IDLE:
         updateSpriteAnimation(sprites.IDLE);
         return;
       case BattleActionEnum.ENEMY_WIN:
         updateSpriteAnimation(sprites.DEATH);
+        stopMusic();
+        if (sprites.DEATH?.sound) {
+          playSoundEffect(sprites.DEATH.sound);
+        }
         return;
       default:
         updateSpriteAnimation(sprites.IDLE);
@@ -72,7 +87,7 @@ export default function Player({
       className={cn(
         "absolute bottom-0 transition-all",
         playerAttacking && "translate-x-12",
-        // Start at left-36, then transition to left-72 once intro has started
+        // start at left-36, then transition to left-72 once intro has started
         !hasIntroStarted ? "left-36" : "left-72"
       )}
       style={{

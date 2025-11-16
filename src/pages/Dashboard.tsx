@@ -4,10 +4,15 @@ import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
 import { Progress } from "@/components/ui/Progress";
 import { Player, usePlayerByUid, usePlayerApi } from "@/hooks";
+import { useEffect } from "react";
+import { useMusic } from "@/hooks/useMusic";
+import { useAudio } from "@/contexts/AudioContext";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { restartMusic } = useMusic();
+  const { isAudioPlaying } = useAudio();
 
   const userInfo: Player = usePlayerByUid(user?.id || "");
 
@@ -16,6 +21,12 @@ const Dashboard = () => {
   if (!user) return null;
 
   const xpPercentage = (userInfo?.xp / userInfo?.neededXp) * 100;
+
+  useEffect(() => {
+    if (isAudioPlaying) {
+      restartMusic();
+    }
+  }, [restartMusic, isAudioPlaying]);
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -38,7 +49,9 @@ const Dashboard = () => {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-muted-foreground text-sm">PLAYER</p>
-                <h2 className="text-2xl text-secondary">{user.user_metadata.username}</h2>
+                <h2 className="text-2xl text-secondary">
+                  {user.user_metadata.username}
+                </h2>
               </div>
               <div className="text-right">
                 <p className="text-muted-foreground text-sm">LEVEL</p>
