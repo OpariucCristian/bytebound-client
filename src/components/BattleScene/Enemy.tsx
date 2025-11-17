@@ -56,7 +56,7 @@ export default function Enemy({
   return (
     <div
       className={cn(
-        "absolute bottom-0 right-72 transition-all duration-150",
+        "absolute bottom-0 right-80 transition-all duration-150",
         enemyAttacking ? "-translate-x-4" : "translate-x-0"
       )}
       style={{

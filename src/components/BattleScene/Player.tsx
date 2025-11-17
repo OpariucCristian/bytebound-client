@@ -88,7 +88,7 @@ export default function Player({
         "absolute bottom-0 transition-all",
         playerAttacking && "translate-x-12",
         // start at left-36, then transition to left-72 once intro has started
-        !hasIntroStarted ? "left-36" : "left-72"
+        !hasIntroStarted ? "left-36" : "left-80"
       )}
       style={{
         bottom: `${playerBottomOffset}px`,

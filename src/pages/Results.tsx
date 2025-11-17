@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
-import { usePlayerByUid, Player, useGameMutations } from "@/hooks";
+import { usePlayerByUid, useGameMutations } from "@/hooks";
 
 interface LocationState {
   gameId: string;
@@ -14,22 +14,21 @@ const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
-  const playerData: Player = usePlayerByUid(user?.id || "");
+  const {data: playerData, error: playerError} = usePlayerByUid(user?.id || "");
 
   const state = location.state as LocationState;
 
-  const { data: gameStats } = useGameMutations().getGameStats(
+  const { data: gameStats, error: gameStatsError } = useGameMutations().getGameStats(
     state?.gameId || ""
   );
-  console.log("Game Stats:", gameStats);
-  useEffect(() => {
-    if (!state || !user) {
-      navigate("/");
-      return;
-    }
-  }, [state, user, navigate, updateUser]);
 
-  if (!state || !user) return null;
+  useEffect(() => {
+    if (!state || !user || playerError || gameStatsError) {
+      navigate("/");
+    }
+  }, [state, user, navigate, updateUser, gameStats, playerData]);
+
+  if (!state || !user || gameStatsError || playerError) return null;
 
   return (
     <div className="min-h-screen p-4 md:p-8">

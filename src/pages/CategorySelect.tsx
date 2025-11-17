@@ -24,12 +24,14 @@ const CategorySelect = () => {
     if (isAudioPlaying) {
       restartMusic();
     }
-  }, [restartMusic, isAudioPlaying]);
+  }, []);
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
+      <div className="w-[60rem] h-[40rem] mx-auto flex flex-col gap-48">
+    
+<div>
+      <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl md:text-4xl text-primary">SELECT CATEGORY</h1>
           <ArcadeButton
             variant="secondary"
@@ -39,7 +41,6 @@ const CategorySelect = () => {
             BACK
           </ArcadeButton>
         </div>
-
         <div className="grid md:grid-cols-3 gap-6">
           {categories.map((category) => (
             <ArcadeCard
@@ -55,7 +56,7 @@ const CategorySelect = () => {
               </button>
             </ArcadeCard>
           ))}
-        </div>
+        </div></div>
 
         <div className="mt-12">
           <ArcadeCard>

@@ -18,8 +18,8 @@ import { SoundEffectProvider } from "./contexts/SoundEffectContext";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+ return (<QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
         <AudioProvider>
@@ -47,7 +47,7 @@ const App = () => (
         </AudioProvider>
       </TooltipProvider>
     </AuthProvider>
-  </QueryClientProvider>
-);
+  </QueryClientProvider>)
+};
 
 export default App;

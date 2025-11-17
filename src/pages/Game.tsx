@@ -238,21 +238,9 @@ const Game = () => {
     );
   }
 
-  // if (!currentQuestion) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <h2 className="text-2xl text-primary animate-blink">
-  //         LOADING QUESTION...
-  //       </h2>
-  //     </div>
-  //   );
-  // }
-
-  const multiplier = Math.min(Math.floor(stats.streak / 3) + 1, 5);
-
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
+      <div className="w-[60rem] mx-auto">
         {/* Header */}
         {battleAction !== "start-game" && (
           <>
@@ -297,15 +285,20 @@ const Game = () => {
                   {questionCountDown}
                 </p>
               </div>
-               <div className="text-center w-40">
+              <div className="text-center w-40">
                 <p className="text-muted-foreground text-sm">STREAK</p>
                 <p className="text-2xl text-accent">{stats.streak}</p>
               </div>
-                <div className="text-right w-40">
+              <div className="text-right w-40">
                 <p className="text-muted-foreground text-sm">DIFFICULTY</p>
-                <p className={`text-2xl text-${getDifficultColor(currentQuestion.difficulty)}`}>{currentQuestion.difficulty}</p>
+                <p
+                  className={`text-2xl text-${getDifficultColor(
+                    currentQuestion.difficulty
+                  )}`}
+                >
+                  {currentQuestion.difficulty}
+                </p>
               </div>
-             
             </div>
             {/* Question */}
             <ArcadeCard

@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import Enemy from "./Enemy";
 import Player from "./Player";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
-import { CharacterSprites } from "@/types/characterTypes";
 import { ENEMY_SPRITES, PLAYER_SPRITES } from "@/utils/spriteConfigs";
 
 interface BattleSceneProps {
@@ -18,7 +17,6 @@ export default function BattleScene({
   const [playerIntroComplete, setPlayerIntroComplete] = useState(false);
   const [enemyIntroComplete, setEnemyIntroComplete] = useState(false);
 
-  // When both intros are complete, notify parent
   useEffect(() => {
     if (playerIntroComplete && enemyIntroComplete && action === "start-game") {
       onIntroComplete?.();
@@ -26,7 +24,7 @@ export default function BattleScene({
   }, [playerIntroComplete, enemyIntroComplete, action, onIntroComplete]);
 
   return (
-    <div className="relative w-full max-w-4xl h-52 border-2 overflow-hidden">
+    <div className="relative w-full max-w-[60rem] h-52 border-2 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-bottom opacity-90"
@@ -56,8 +54,8 @@ export default function BattleScene({
               action === "player-attack" ? "text-neon-green" : "text-red-500"
             )}
           >
-            {action === BattleActionEnum.PLAYER_ATTACK && "PLAYER STRIKES!"}
-            {action === BattleActionEnum.ENEMY_ATTACK && "ENEMY STRIKES!"}
+            {action === BattleActionEnum.PLAYER_ATTACK && "CORRECT ANSWER!"}
+            {action === BattleActionEnum.ENEMY_ATTACK && "WRONG ANSWER!"}
             {action === BattleActionEnum.ENEMY_WIN && "ENEMY WINS!"}
             {action === BattleActionEnum.START_GAME && "BATTLE START!"}
           </p>

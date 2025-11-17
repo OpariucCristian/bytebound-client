@@ -21,7 +21,7 @@ const MusicContext = createContext<MusicContextType | undefined>(undefined);
 export const MusicProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { isAudioPlaying } = useAudio();
+  const { isAudioPlaying, stopAudio } = useAudio();
   const [currentTrackPath, setCurrentTrackPath] = useState<MusicTracks>(
     MusicTracks.MENU
   );
@@ -34,7 +34,9 @@ export const MusicProvider: React.FC<{ children: ReactNode }> = ({
       return;
     }
     currentTrack.loop = true;
-    currentTrack.play();
+    currentTrack.play().catch(() => {
+      // Silently handle autoplay prevention - user needs to interact first
+    });
   };
 
   const restartMusic = () => {
@@ -43,7 +45,9 @@ export const MusicProvider: React.FC<{ children: ReactNode }> = ({
     }
     currentTrack.loop = true;
     currentTrack.currentTime = 0;
-    currentTrack.play();
+    currentTrack.play().catch(() => {
+      stopAudio();
+    });
   };
 
   const stopMusic = () => {

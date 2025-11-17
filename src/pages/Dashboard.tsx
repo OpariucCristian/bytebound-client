@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
 import { Progress } from "@/components/ui/Progress";
-import { Player, usePlayerByUid, usePlayerApi } from "@/hooks";
+import { usePlayerByUid } from "@/hooks";
 import { useEffect } from "react";
 import { useMusic } from "@/hooks/useMusic";
 import { useAudio } from "@/contexts/AudioContext";
@@ -14,7 +14,7 @@ const Dashboard = () => {
   const { restartMusic } = useMusic();
   const { isAudioPlaying } = useAudio();
 
-  const userInfo: Player = usePlayerByUid(user?.id || "");
+  const {data: userInfo} = usePlayerByUid(user?.id || "");
 
   console.log(userInfo);
 
@@ -26,11 +26,11 @@ const Dashboard = () => {
     if (isAudioPlaying) {
       restartMusic();
     }
-  }, [restartMusic, isAudioPlaying]);
+  }, []);
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
+      <div className="w-[60rem] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <img
