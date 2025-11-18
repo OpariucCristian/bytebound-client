@@ -20,8 +20,6 @@ const Game = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const category = searchParams.get("category");
-  const difficulty = searchParams.get("difficulty") || "medium";
   const mode = searchParams.get("mode"); // 'endless'
 
   const [game, setGame] = useState<ReadNewGameDto | null>(null);
@@ -57,7 +55,7 @@ const Game = () => {
     try {
       const newGame = await startNewGame.mutateAsync({
         type: "endless",
-        category: category,
+        category: game.category,
         difficulty: 1,
       });
 
@@ -75,7 +73,7 @@ const Game = () => {
 
   // Start a new game on mount
   useEffect(() => {
-    if (!category || mode !== "endless") {
+    if (!game?.category || mode !== "endless") {
       navigate("/category");
       return;
     }
@@ -87,7 +85,7 @@ const Game = () => {
     startGame();
 
     return () => stopCountdown();
-  }, [category, difficulty]);
+  }, []);
 
   const startCountdown = () => {
     stopCountdown();
@@ -179,7 +177,7 @@ const Game = () => {
             navigate("/results", {
               state: {
                 gameId: game.id,
-                category,
+                category: game.category,
                 mode: "endless",
               },
             });
@@ -364,10 +362,13 @@ const Game = () => {
           }`}
           style={{ transitionDuration: "1500ms" }}
         >
-          <BattleScene
-            action={battleAction}
-            onIntroComplete={handleIntroComplete}
-          />
+          {game?.id && (
+            <BattleScene
+              action={battleAction}
+              onIntroComplete={handleIntroComplete}
+              questionDifficulty={currentQuestion?.difficulty}
+            />
+          )}
         </div>
       </div>
     </div>

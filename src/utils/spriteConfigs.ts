@@ -18,7 +18,7 @@ const PLAYER_2_SPRITES: CharacterSprites = {
   DEATH: { frames: 4, src: "/resources/wizard/DEATH.png" },
 };
 
-const ENEMY_SPRITES: CharacterSprites = {
+const DEMON_SPRITES: CharacterSprites = {
   IDLE: { frames: 4, src: "/resources/demon/IDLE.png" },
   ATTACK: { frames: 8, src: "/resources/demon/ATTACK.png" },
   HURT: { frames: 4, src: "/resources/demon/HURT.png" },
@@ -35,4 +35,4 @@ const SKELETON_SPRITES: CharacterSprites = {
   bottomOffset: -35,
 };
 
-export { PLAYER_SPRITES, PLAYER_2_SPRITES, ENEMY_SPRITES, SKELETON_SPRITES };
+export { PLAYER_SPRITES, PLAYER_2_SPRITES, DEMON_SPRITES, SKELETON_SPRITES };

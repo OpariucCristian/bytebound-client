@@ -1,18 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import Enemy from "./Enemy";
 import Player from "./Player";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
-import { ENEMY_SPRITES, PLAYER_SPRITES } from "@/utils/spriteConfigs";
+import { DEMON_SPRITES, PLAYER_SPRITES } from "@/utils/spriteConfigs";
+import { ReadNewGameDto } from "@/hooks";
+import { getEnemySpritePerDifficulty } from "@/utils/spriteUtils";
 
 interface BattleSceneProps {
   action: BattleAction;
   onIntroComplete?: () => void;
+  questionDifficulty?: number;
 }
 
 export default function BattleScene({
   action,
   onIntroComplete,
+  questionDifficulty
 }: BattleSceneProps) {
   const [playerIntroComplete, setPlayerIntroComplete] = useState(false);
   const [enemyIntroComplete, setEnemyIntroComplete] = useState(false);
@@ -22,6 +26,11 @@ export default function BattleScene({
       onIntroComplete?.();
     }
   }, [playerIntroComplete, enemyIntroComplete, action, onIntroComplete]);
+
+  const enemy_sprites = useMemo(() => {
+    const difficulty = questionDifficulty ?? 1;
+    return getEnemySpritePerDifficulty(difficulty);
+  }, [questionDifficulty]);
 
   return (
     <div className="relative w-full max-w-[60rem] h-52 border-2 overflow-hidden">
@@ -41,7 +50,7 @@ export default function BattleScene({
       {/* Enemy (Right Side) */}
       <Enemy
         action={action}
-        sprites={ENEMY_SPRITES}
+        sprites={enemy_sprites}
         onIntroComplete={() => setEnemyIntroComplete(true)}
       />
 
