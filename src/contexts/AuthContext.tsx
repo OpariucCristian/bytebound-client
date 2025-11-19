@@ -44,9 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateUser = (updatedUser: User) => {
-    // Update user via auth hook's updateUserProgress or similar logic
-    // For now, this is a pass-through since the hook manages its own state
-    console.log('Updating user:', updatedUser);
+    console.debug('Updating user:', updatedUser);
   };
 
   return (

@@ -46,20 +46,20 @@ export default function Enemy({
         return;
       case BattleActionEnum.DIFFICULTY_CHANGE:
         if (!isPlayingDeath && !difficultyChangeStartedRef.current) {
-          console.log("Enemy difficulty change detected");
+          console.debug("Enemy difficulty change detected");
           difficultyChangeStartedRef.current = true;
           setIsPlayingDeath(true);
           updateSpriteAnimation(previousSpritesRef.current.DEATH);
           const deathDuration =
             (previousSpritesRef.current.DEATH?.frames || 6) * 150;
           setTimeout(() => {
-            console.log("Death animation complete, starting walk intro");
+            console.debug("Death animation complete, starting walk intro");
             setIsPlayingDeath(false);
             setIsTransitioning(true);
             setHasIntroStarted(false);
 
             requestAnimationFrame(() => {
-              console.log("Position updated, loading new sprite");
+              console.debug("Position updated, loading new sprite");
               updateSpriteAnimation(sprites.WALK);
               previousSpritesRef.current = sprites;
               setTimeout(() => {
@@ -67,7 +67,7 @@ export default function Enemy({
                 setHasIntroStarted(true);
 
                 walkIntroTimerRef.current = setTimeout(() => {
-                  console.log("Walk intro complete, calling onIntroComplete");
+                  console.debug("Walk intro complete, calling onIntroComplete");
                   onIntroComplete?.();
                 }, 2000); 
               }, 50);

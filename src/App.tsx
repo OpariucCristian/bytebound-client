@@ -19,7 +19,6 @@ import { SoundEffectProvider } from "./contexts/SoundEffectContext";
 const queryClient = new QueryClient();
 
 const App = () => {
-  console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
  return (<QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
