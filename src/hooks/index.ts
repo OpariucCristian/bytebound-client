@@ -17,7 +17,7 @@ export * from './useQuestion';
 export * from './useGame';
 
 // Sprite animation hook
-export * from './useSpriteAnimation';
+export * from '../components/BattleScene/useSpriteAnimation';
 
 // Re-export existing hooks
 export * from './use-toast';

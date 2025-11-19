@@ -40,6 +40,7 @@ export interface QuestionPoolDto {
   difficulty: number;
   answers: AnswerDto[];
   questionSeconds: number;
+  isDifficultyChange: boolean;
 }
 
 export interface AnswerDto {

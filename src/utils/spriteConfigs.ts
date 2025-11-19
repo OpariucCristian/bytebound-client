@@ -22,6 +22,8 @@ const DEMON_SPRITES: CharacterSprites = {
   IDLE: { frames: 4, src: "/resources/demon/IDLE.png" },
   ATTACK: { frames: 8, src: "/resources/demon/ATTACK.png" },
   HURT: { frames: 4, src: "/resources/demon/HURT.png" },
+  DEATH: { frames: 7, src: "/resources/demon/DEATH.png" },
+  WALK: { frames: 4, src: "/resources/demon/WALK.png" },
   size: 128,
   bottomOffset: 35,
 };
@@ -30,6 +32,8 @@ const SKELETON_SPRITES: CharacterSprites = {
   IDLE: { frames: 4, src: "/resources/skeleton/IDLE.png" },
   ATTACK: { frames: 8, src: "/resources/skeleton/ATTACK.png" },
   HURT: { frames: 4, src: "/resources/skeleton/HURT.png" },
+  DEATH: { frames: 4, src: "/resources/skeleton/DEATH.png" },
+  WALK: { frames: 4, src: "/resources/skeleton/WALK.png" },
   size: 208,
   flipHorizontal: true,
   bottomOffset: -35,

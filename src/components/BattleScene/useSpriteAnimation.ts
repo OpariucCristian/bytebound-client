@@ -39,6 +39,7 @@ export function useSpriteAnimation({
         if (nextFrame === 0) {
           switch (action) {
             case BattleActionEnum.START_GAME:
+            case BattleActionEnum.DIFFICULTY_CHANGE:
               setIntroComplete(true);
               break;
             case BattleActionEnum.ENEMY_WIN:

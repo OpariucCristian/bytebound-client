@@ -21,6 +21,7 @@ const Game = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const mode = searchParams.get("mode"); // 'endless'
+  const category = searchParams.get("category");
 
   const [game, setGame] = useState<ReadNewGameDto | null>(null);
   const [currentQuestion, setCurrentQuestion] =
@@ -53,9 +54,11 @@ const Game = () => {
 
   const startGame = async () => {
     try {
+      console.log("Rendering Game Component");
+
       const newGame = await startNewGame.mutateAsync({
         type: "endless",
-        category: game.category,
+        category: category,
         difficulty: 1,
       });
 
@@ -67,16 +70,18 @@ const Game = () => {
   };
 
   const handleIntroComplete = () => {
+    console.log("handleIntroComplete called - setting to IDLE");
     setBattleAction(BattleActionEnum.IDLE);
     startCountdown();
   };
 
   // Start a new game on mount
   useEffect(() => {
-    if (!game?.category || mode !== "endless") {
-      navigate("/category");
-      return;
-    }
+    // if (!game?.category || mode !== "endless") {
+    //   console.log("Game mode or category missing, redirecting to category select");
+    //   navigate("/category");
+    //   return;
+    // }
 
     if (!user) {
       navigate("/login");
@@ -147,7 +152,6 @@ const Game = () => {
         // Auto advance after 1.5s
         setTimeout(() => {
           loadNextQuestion();
-          startCountdown();
         }, 1500);
       } else {
         // Trigger enemy attack animation
@@ -183,7 +187,6 @@ const Game = () => {
             });
           } else {
             loadNextQuestion();
-            startCountdown();
           }
         }, 1500);
       }
@@ -196,16 +199,33 @@ const Game = () => {
     if (!game?.id) return;
 
     try {
-      setBattleAction(BattleActionEnum.IDLE);
-
       const result = await fetchNextQuestion();
       if (result.data) {
         const nextQuestion = {
           ...result.data,
           answers: shuffleArray(result.data.answers),
         };
+
+        // Check if difficulty changed (backend tells us)
+        const difficultyChanged = nextQuestion.isDifficultyChange;
+        console.log("loadNextQuestion - isDifficultyChange:", difficultyChanged, "difficulty:", nextQuestion.difficulty);
+
+        if (difficultyChanged) {
+          // Trigger difficulty change animation
+          console.log("Setting battle action to DIFFICULTY_CHANGE");
+          setBattleAction(BattleActionEnum.DIFFICULTY_CHANGE);
+        } else {
+          console.log("Setting battle action to IDLE");
+          setBattleAction(BattleActionEnum.IDLE);
+        }
+
         setCurrentQuestion(nextQuestion);
         hasAnsweredRef.current = false;
+
+        // Only start countdown if no difficulty change (intro will start it)
+        if (!difficultyChanged) {
+          startCountdown();
+        }
       }
     } catch (err) {
       console.error("Failed to fetch next question:", err);

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
 import { CharacterSprites } from "@/types/characterTypes";
-import { useSpriteAnimation } from "@/hooks/useSpriteAnimation";
+import { useSpriteAnimation } from "@/components/BattleScene/useSpriteAnimation";
 import { useSoundEffect } from "@/contexts/SoundEffectContext";
 import { useMusic } from "@/contexts/MusicContext";
 
@@ -87,8 +87,8 @@ export default function Player({
       className={cn(
         "absolute bottom-0 transition-all",
         playerAttacking && "translate-x-12",
-        // start at left-36, then transition to left-72 once intro has started
-        !hasIntroStarted ? "left-36" : "left-80"
+        // start at left-36, then transition to left-80 once intro has started
+        !hasIntroStarted ? "left-20 sm:left-28 lg-custom:left-32 md:left-36" : "left-48 sm:left-64 lg-custom:left-80 md:left-56",
       )}
       style={{
         bottom: `${playerBottomOffset}px`,
