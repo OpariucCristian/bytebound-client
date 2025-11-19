@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
 import { Progress } from "@/components/ui/Progress";
-import { usePlayerByUid } from "@/hooks";
+import { getPlayerByUid, playerQueryKeys } from "@/services/playerService";
 import { useEffect } from "react";
 import { useMusic } from "@/hooks/useMusic";
 import { useAudio } from "@/contexts/AudioContext";
@@ -14,9 +15,11 @@ const Dashboard = () => {
   const { restartMusic } = useMusic();
   const { isAudioPlaying } = useAudio();
 
-  const {data: userInfo} = usePlayerByUid(user?.id || "");
-
-  console.log(userInfo);
+  const { data: userInfo } = useQuery({
+    queryKey: playerQueryKeys.byUid(user?.id || ""),
+    queryFn: () => getPlayerByUid(user?.id || ""),
+    enabled: !!user?.id,
+  });
 
   if (!user) return null;
 

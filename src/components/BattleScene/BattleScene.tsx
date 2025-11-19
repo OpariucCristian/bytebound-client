@@ -4,7 +4,6 @@ import Enemy from "./Enemy";
 import Player from "./Player";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
 import { DEMON_SPRITES, PLAYER_SPRITES } from "@/utils/spriteConfigs";
-import { ReadNewGameDto } from "@/hooks";
 import { getEnemySpritePerDifficulty } from "@/utils/spriteUtils";
 
 interface BattleSceneProps {

@@ -1,12 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
 import BattleScene from "@/components/BattleScene/BattleScene";
-import { ReadNewGameDto, type QuestionPoolDto } from "@/hooks/useGame";
+import { 
+  ReadNewGameDto, 
+  type QuestionPoolDto, 
+  startNewGame as startNewGameService,
+  checkGameAnswer as checkGameAnswerService,
+  timeoutQuestion as timeoutQuestionService,
+  getNextQuestion as getNextQuestionService,
+  gameQueryKeys
+} from "@/services/gameService";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDifficultColor, shuffleArray } from "@/utils/gameUtils";
-import { useGameMutations, useGetNextQuestion } from "@/hooks";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
 
 interface GameStats {
@@ -41,9 +49,30 @@ const Game = () => {
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasAnsweredRef = useRef<boolean>(false);
 
-  const { startNewGame, checkGameAnswer, timeoutQuestion } = useGameMutations();
-  const { refetch: fetchNextQuestion, isLoading: isLoadingNextQuestion } =
-    useGetNextQuestion(game?.id);
+  const queryClient = useQueryClient();
+
+  const startNewGame = useMutation({
+    mutationFn: startNewGameService,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: gameQueryKeys.all });
+    },
+  });
+
+  const checkGameAnswer = useMutation({
+    mutationFn: ({ gameId, answerId }: { gameId: string; answerId: number }) =>
+      checkGameAnswerService(gameId, answerId),
+  });
+
+  const timeoutQuestion = useMutation({
+    mutationFn: ({ gameId }: { gameId: string }) =>
+      timeoutQuestionService(gameId),
+  });
+
+  const { refetch: fetchNextQuestion, isLoading: isLoadingNextQuestion } = useQuery({
+    queryKey: gameQueryKeys.nextQuestion(game?.id || ""),
+    queryFn: () => getNextQuestionService(game?.id || ""),
+    enabled: false,
+  });
 
   const isUiLocked =
     isLoadingNextQuestion ||
@@ -54,7 +83,7 @@ const Game = () => {
 
   const startGame = async () => {
     try {
-      console.log("Rendering Game Component");
+      console.debug("Rendering Game Component");
 
       const newGame = await startNewGame.mutateAsync({
         type: "endless",
@@ -70,7 +99,7 @@ const Game = () => {
   };
 
   const handleIntroComplete = () => {
-    console.log("handleIntroComplete called - setting to IDLE");
+    console.debug("handleIntroComplete called - setting to IDLE");
     setBattleAction(BattleActionEnum.IDLE);
     startCountdown();
   };
@@ -208,14 +237,14 @@ const Game = () => {
 
         // Check if difficulty changed (backend tells us)
         const difficultyChanged = nextQuestion.isDifficultyChange;
-        console.log("loadNextQuestion - isDifficultyChange:", difficultyChanged, "difficulty:", nextQuestion.difficulty);
+        console.debug("loadNextQuestion - isDifficultyChange:", difficultyChanged, "difficulty:", nextQuestion.difficulty);
 
         if (difficultyChanged) {
           // Trigger difficulty change animation
-          console.log("Setting battle action to DIFFICULTY_CHANGE");
+          console.debug("Setting battle action to DIFFICULTY_CHANGE");
           setBattleAction(BattleActionEnum.DIFFICULTY_CHANGE);
         } else {
-          console.log("Setting battle action to IDLE");
+          console.debug("Setting battle action to IDLE");
           setBattleAction(BattleActionEnum.IDLE);
         }
 

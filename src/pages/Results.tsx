@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
-import { usePlayerByUid, useGameMutations } from "@/hooks";
+import { getPlayerByUid, playerQueryKeys } from "@/services/playerService";
+import { getGameStats, gameQueryKeys } from "@/services/gameService";
 
 interface LocationState {
   gameId: string;
@@ -14,14 +16,20 @@ const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
-  const { data: playerData, error: playerError } = usePlayerByUid(
-    user?.id || ""
-  );
 
   const state = location.state as LocationState;
 
-  const { data: gameStats, error: gameStatsError } =
-    useGameMutations().getGameStats(state?.gameId || "");
+  const { data: playerData, error: playerError } = useQuery({
+    queryKey: playerQueryKeys.byUid(user?.id || ""),
+    queryFn: () => getPlayerByUid(user?.id || ""),
+    enabled: !!user?.id,
+  });
+
+  const { data: gameStats, error: gameStatsError } = useQuery({
+    queryKey: gameQueryKeys.stats(state?.gameId || ""),
+    queryFn: () => getGameStats(state?.gameId || ""),
+    enabled: !!state?.gameId,
+  });
 
   useEffect(() => {
     if (!state || !user || playerError || gameStatsError) {
