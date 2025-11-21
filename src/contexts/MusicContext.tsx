@@ -30,7 +30,7 @@ export const MusicProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   const playMusic = () => {
-    if (!currentTrack.paused) {
+    if (!currentTrack.paused || !isAudioPlaying) {
       return;
     }
     currentTrack.loop = true;
@@ -40,7 +40,7 @@ export const MusicProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const restartMusic = () => {
-    if (!currentTrack.paused) {
+    if (!currentTrack.paused || !isAudioPlaying) {
       return;
     }
     currentTrack.loop = true;
@@ -55,6 +55,9 @@ export const MusicProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const changeTrack = (newTrack: MusicTracks) => {
+    if(!isAudioPlaying) {
+      return;
+    }
     currentTrack.pause();
     const newAudio = new Audio(newTrack);
     setCurrentTrack(newAudio);
