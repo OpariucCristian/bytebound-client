@@ -8,11 +8,12 @@ import { getPlayerByUid, playerQueryKeys } from "@/services/playerService";
 import { useEffect } from "react";
 import { useMusic } from "@/hooks/useMusic";
 import { useAudio } from "@/contexts/AudioContext";
+import { MusicTracks } from "@/utils/musicUtils";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { restartMusic } = useMusic();
+  const { changeTrack } = useMusic();
   const { isAudioPlaying } = useAudio();
 
   const { data: userInfo } = useQuery({
@@ -27,7 +28,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAudioPlaying) {
-      restartMusic();
+       changeTrack(MusicTracks.MENU);
     }
   }, []);
 

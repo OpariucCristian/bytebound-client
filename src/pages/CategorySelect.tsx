@@ -4,12 +4,13 @@ import { ArcadeCard } from "@/components/ArcadeCard";
 import { useMusic } from "@/contexts/MusicContext";
 import { useEffect } from "react";
 import { useAudio } from "@/contexts/AudioContext";
+import { MusicTracks } from "@/utils/musicUtils";
 
 type Category = "dsa" | "typescript" | "csharp";
 
 const CategorySelect = () => {
   const navigate = useNavigate();
-  const { restartMusic } = useMusic();
+  const { changeTrack } = useMusic();
   const {isAudioPlaying} = useAudio();
 
   const categories: Array<{ id: Category; name: string; color: string }> = [
@@ -22,7 +23,7 @@ const CategorySelect = () => {
 
   useEffect(() => {
     if (isAudioPlaying) {
-      restartMusic();
+      changeTrack(MusicTracks.MENU);
     }
   }, []);
 
