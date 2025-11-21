@@ -4,18 +4,20 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArcadeButton } from "@/components/ArcadeButton";
 import { ArcadeCard } from "@/components/ArcadeCard";
 import BattleScene from "@/components/BattleScene/BattleScene";
-import { 
-  ReadNewGameDto, 
-  type QuestionPoolDto, 
+import {
+  ReadNewGameDto,
+  type QuestionPoolDto,
   startNewGame as startNewGameService,
   checkGameAnswer as checkGameAnswerService,
   timeoutQuestion as timeoutQuestionService,
   getNextQuestion as getNextQuestionService,
-  gameQueryKeys
+  gameQueryKeys,
 } from "@/services/gameService";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDifficultColor, shuffleArray } from "@/utils/gameUtils";
 import { BattleAction, BattleActionEnum } from "@/types/gameTypes";
+import { useMusic } from "@/hooks";
+import { MusicTracks } from "@/utils/musicUtils";
 
 interface GameStats {
   correct: number;
@@ -30,6 +32,7 @@ const Game = () => {
   const { user } = useAuth();
   const mode = searchParams.get("mode"); // 'endless'
   const category = searchParams.get("category");
+  const { changeTrack } = useMusic();
 
   const [game, setGame] = useState<ReadNewGameDto | null>(null);
   const [currentQuestion, setCurrentQuestion] =
@@ -68,11 +71,12 @@ const Game = () => {
       timeoutQuestionService(gameId),
   });
 
-  const { refetch: fetchNextQuestion, isLoading: isLoadingNextQuestion } = useQuery({
-    queryKey: gameQueryKeys.nextQuestion(game?.id || ""),
-    queryFn: () => getNextQuestionService(game?.id || ""),
-    enabled: false,
-  });
+  const { refetch: fetchNextQuestion, isLoading: isLoadingNextQuestion } =
+    useQuery({
+      queryKey: gameQueryKeys.nextQuestion(game?.id || ""),
+      queryFn: () => getNextQuestionService(game?.id || ""),
+      enabled: false,
+    });
 
   const isUiLocked =
     isLoadingNextQuestion ||
@@ -90,7 +94,7 @@ const Game = () => {
         category: category,
         difficulty: 1,
       });
-
+      changeTrack(MusicTracks.BATTLE_1);
       setCurrentQuestion(newGame.firstQuestion);
       setGame(newGame);
     } catch (err) {
@@ -203,10 +207,8 @@ const Game = () => {
           streak: 0,
         });
 
-        // Auto advance after 1.5s
         setTimeout(() => {
           if (newLives <= 0) {
-            // Game over - no more lives
             navigate("/results", {
               state: {
                 gameId: game.id,
@@ -235,14 +237,18 @@ const Game = () => {
           answers: shuffleArray(result.data.answers),
         };
 
-        // Check if difficulty changed (backend tells us)
         const difficultyChanged = nextQuestion.isDifficultyChange;
-        console.debug("loadNextQuestion - isDifficultyChange:", difficultyChanged, "difficulty:", nextQuestion.difficulty);
+        console.debug(
+          "loadNextQuestion - isDifficultyChange:",
+          difficultyChanged,
+          "difficulty:",
+          nextQuestion.difficulty
+        );
 
         if (difficultyChanged) {
-          // Trigger difficulty change animation
           console.debug("Setting battle action to DIFFICULTY_CHANGE");
           setBattleAction(BattleActionEnum.DIFFICULTY_CHANGE);
+          changeTrack(MusicTracks.BATTLE_2);
         } else {
           console.debug("Setting battle action to IDLE");
           setBattleAction(BattleActionEnum.IDLE);
@@ -251,7 +257,6 @@ const Game = () => {
         setCurrentQuestion(nextQuestion);
         hasAnsweredRef.current = false;
 
-        // Only start countdown if no difficulty change (intro will start it)
         if (!difficultyChanged) {
           startCountdown();
         }
