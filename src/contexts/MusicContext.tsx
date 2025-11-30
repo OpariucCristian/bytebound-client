@@ -55,7 +55,13 @@ export const MusicProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const changeTrack = (newTrack: MusicTracks) => {
-    if(!isAudioPlaying || newTrack === currentTrackPath) {
+    if (newTrack === currentTrackPath) {
+      return;
+    }
+    if (!isAudioPlaying) {
+      const newAudio = new Audio(newTrack);
+      setCurrentTrack(newAudio);
+      setCurrentTrackPath(newTrack);
       return;
     }
     currentTrack.pause();
