@@ -21,7 +21,7 @@ const Results = () => {
 
   const { data: playerData, error: playerError } = useQuery({
     queryKey: playerQueryKeys.byUid(user?.id || ""),
-    queryFn: () => getPlayerByUid(user?.id || ""),
+    queryFn: () => getPlayerByUid(),
     enabled: !!user?.id,
   });
 
@@ -78,7 +78,7 @@ const Results = () => {
                   </div>
                   <div className="text-center">
                     <p className="text-3xl text-secondary">
-                      {gameStats?.correctAnswersMaxStreak}
+                      {gameStats?.correctAnswersStreakMax}
                     </p>
                     <p className="text-muted-foreground text-sm">MAX STREAK</p>
                   </div>

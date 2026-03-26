@@ -114,10 +114,6 @@ export default function Player({
         }}
       />
 
-      {/* Attack Effect */}
-      {playerAttacking && (
-        <div className="absolute top-4 -right-4 text-2xl animate-ping">⚔️</div>
-      )}
     </div>
   );
 }

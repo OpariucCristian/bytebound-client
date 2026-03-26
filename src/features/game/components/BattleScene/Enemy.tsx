@@ -144,9 +144,6 @@ export default function Enemy({
         }}
       />
 
-      {enemyAttacking && (
-        <div className="absolute top-8 left-0 text-2xl animate-ping">💥</div>
-      )}
     </div>
   );
 }
