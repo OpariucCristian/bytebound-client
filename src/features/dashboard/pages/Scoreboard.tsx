@@ -55,7 +55,7 @@ const Scoreboard = () => {
                     <div className="text-center space-y-6">
                         <h3 className="text-2xl text-primary mb-8">SCOREBOARD</h3>
 
-                        <div className="h-64 flex items-center justify-center">
+                        <div className="h-72 flex items-center justify-center">
                             <table className="w-full max-w-xl border-collapse">
                                 <thead>
                                     <tr >

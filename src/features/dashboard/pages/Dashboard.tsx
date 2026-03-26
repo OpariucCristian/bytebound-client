@@ -18,7 +18,7 @@ const Dashboard = () => {
 
     const { data: userInfo } = useQuery({
         queryKey: playerQueryKeys.byUid(user?.id || ""),
-        queryFn: () => getPlayerByUid(user?.id || ""),
+        queryFn: () => getPlayerByUid(),
         enabled: !!user?.id,
     });
 

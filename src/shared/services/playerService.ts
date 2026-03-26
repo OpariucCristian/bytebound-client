@@ -27,6 +27,6 @@ export const playerQueryKeys = {
 };
 
 // Service functions
-export const getPlayerByUid = async (uid: string): Promise<Player> => {
-  return httpService.get<Player>(`players/${uid}`);
+export const getPlayerByUid = async (): Promise<Player> => {
+  return httpService.get<Player>(`players`);
 };
