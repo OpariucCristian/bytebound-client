@@ -3,19 +3,24 @@ import { cn } from "@/shared/lib/utils";
 import Enemy from "./Enemy";
 import Player from "./Player";
 import { BattleAction, BattleActionEnum } from "@/features/game/types/gameTypes";
-import { DEMON_SPRITES, PLAYER_SPRITES } from "@/shared/utils/spriteConfigs";
 import { getEnemySpritePerDifficulty } from "@/shared/utils/spriteUtils";
+import { CharacterSprites } from "../../types/characterTypes";
+import { Hero } from "@/shared/services/heroService";
 
 interface BattleSceneProps {
   action: BattleAction;
   onIntroComplete?: () => void;
   questionDifficulty?: number;
+  player: Hero;
+  playerSprites: CharacterSprites
 }
 
 export default function BattleScene({
   action,
   onIntroComplete,
-  questionDifficulty
+  questionDifficulty,
+  player,
+  playerSprites
 }: BattleSceneProps) {
   const [playerIntroComplete, setPlayerIntroComplete] = useState(false);
   const [enemyIntroComplete, setEnemyIntroComplete] = useState(false);
@@ -55,7 +60,7 @@ export default function BattleScene({
       {/* Player (Left Side) */}
       <Player
         action={action}
-        sprites={PLAYER_SPRITES}
+        sprites={playerSprites}
         onIntroComplete={() => setPlayerIntroComplete(true)}
       />
 

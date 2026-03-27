@@ -26,7 +26,7 @@ const HeroPicker = (props: HeroPickerProps) => {
   });
 
   return (
-    <div className="flex flex-row justify-center items-center w-full gap-5 p-10">
+    <div className="flex flex-row justify-center items-center w-full h-96 gap-5 p-10">
       {isLoading ||
         heroes.map((hero) => {
           return (

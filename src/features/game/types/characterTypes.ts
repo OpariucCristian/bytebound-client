@@ -10,6 +10,7 @@ export interface CharacterSprites {
   size?: number;
   flipHorizontal?: boolean;
   bottomOffset?: number;
+  isMeelee?: boolean;
 }
 
 export interface SpriteConfig {

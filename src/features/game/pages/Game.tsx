@@ -14,10 +14,18 @@ import {
   gameQueryKeys,
 } from "@/shared/services/gameService";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
-import { getDifficultColor, shuffleArray } from "@/features/game/utils/gameUtils";
-import { BattleAction, BattleActionEnum } from "@/features/game/types/gameTypes";
+import {
+  getDifficultColor,
+  shuffleArray,
+} from "@/features/game/utils/gameUtils";
+import {
+  BattleAction,
+  BattleActionEnum,
+} from "@/features/game/types/gameTypes";
 import { useMusic } from "@/shared/hooks";
 import { MusicTracks } from "@/shared/utils/musicUtils";
+import { getPlayerByUid, playerQueryKeys } from "@/shared/services";
+import { CHARACTER_SPRITES } from "@/shared/utils/spriteConfigs";
 
 interface GameStats {
   correct: number;
@@ -38,7 +46,7 @@ const Game = () => {
   const [currentQuestion, setCurrentQuestion] =
     useState<QuestionPoolDto | null>(null);
   const [battleAction, setBattleAction] = useState<BattleAction>(
-    BattleActionEnum.START_GAME
+    BattleActionEnum.START_GAME,
   );
   const [stats, setStats] = useState<GameStats>({
     correct: 0,
@@ -47,12 +55,19 @@ const Game = () => {
     totalXp: 0,
   });
   const [questionCountDown, setQuestionCountDown] = useState<number | null>(
-    null
+    null,
   );
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasAnsweredRef = useRef<boolean>(false);
 
   const queryClient = useQueryClient();
+
+  const { data: player, isLoading } = useQuery({
+    queryKey: playerQueryKeys.byUid(user?.id || ""),
+    queryFn: () => getPlayerByUid(),
+
+    enabled: !!user?.id,
+  });
 
   const startNewGame = useMutation({
     mutationFn: startNewGameService,
@@ -242,7 +257,7 @@ const Game = () => {
           "loadNextQuestion - isDifficultyChange:",
           difficultyChanged,
           "difficulty:",
-          nextQuestion.difficulty
+          nextQuestion.difficulty,
         );
 
         if (difficultyChanged) {
@@ -345,7 +360,7 @@ const Game = () => {
                 <p className="text-muted-foreground text-sm">DIFFICULTY</p>
                 <p
                   className={`text-2xl text-${getDifficultColor(
-                    currentQuestion.difficulty
+                    currentQuestion.difficulty,
                   )}`}
                 >
                   {currentQuestion.difficulty}
@@ -370,7 +385,7 @@ const Game = () => {
               }`}
             >
               {currentQuestion.answers.map((answer) => {
-                let variant: "primary" | "accent" | "danger" = "primary";
+                const variant: "primary" | "accent" | "danger" = "primary";
 
                 return (
                   <ArcadeButton
@@ -421,6 +436,8 @@ const Game = () => {
               action={battleAction}
               onIntroComplete={handleIntroComplete}
               questionDifficulty={currentQuestion?.difficulty}
+              player={player.hero}
+              playerSprites={CHARACTER_SPRITES[player.hero.spriteKey]}
             />
           )}
         </div>

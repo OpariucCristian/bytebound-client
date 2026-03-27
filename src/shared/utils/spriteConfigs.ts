@@ -1,22 +1,47 @@
 import { CharacterSprites } from "@/features/game/types/characterTypes";
 
-const PLAYER_SPRITES: CharacterSprites = {
-  IDLE: { frames: 7, src: "/resources/characters_knight/IDLE.png" },
-  ATTACK_1: { frames: 6, src: "/resources/characters_knight/ATTACK1.png", sound: "/resources/characters_knight/sounds/ATTACK1.wav" },
-  ATTACK_2: { frames: 5, src: "/resources/characters_knight/ATTACK2.png", sound: "/resources/characters_knight/sounds/ATTACK2.wav" },
-  ATTACK_3: { frames: 6, src: "/resources/characters_knight/ATTACK3.png", sound: "/resources/characters_knight/sounds/ATTACK3.wav" },
-  HURT: { frames: 4, src: "/resources/characters_knight/HURT.png", sound: "/resources/characters_knight/sounds/HURT.wav" },
-  DEATH: { frames: 12, src: "/resources/characters_knight/DEATH.png", sound: "/resources/characters_knight/sounds/DEATH.mp3" },
-  WALK: { frames: 8, src: "/resources/characters_knight/RUN.png" },
-};
-
-const PLAYER_2_SPRITES: CharacterSprites = {
-  IDLE: { frames: 8, src: "/resources/characters_wizard/IDLE.png" },
-  ATTACK_1: { frames: 7, src: "/resources/characters_wizard/ATTACK_1.png" },
-  ATTACK_2: { frames: 9, src: "/resources/characters_wizard/ATTACK_2.png" },
-  HURT: { frames: 4, src: "/resources/characters_wizard/HURT.png" },
-  DEATH: { frames: 4, src: "/resources/characters_wizard/DEATH.png" },
-  WALK: { frames: 7, src: "/resources/characters_wizard/WALK.png" },
+const CHARACTER_SPRITES = {
+  characters_knight: {
+    IDLE: { frames: 7, src: "/resources/characters_knight/IDLE.png" },
+    ATTACK_1: {
+      frames: 6,
+      src: "/resources/characters_knight/ATTACK1.png",
+      sound: "/resources/characters_knight/sounds/ATTACK1.wav",
+    },
+    ATTACK_2: {
+      frames: 5,
+      src: "/resources/characters_knight/ATTACK2.png",
+      sound: "/resources/characters_knight/sounds/ATTACK2.wav",
+    },
+    ATTACK_3: {
+      frames: 6,
+      src: "/resources/characters_knight/ATTACK3.png",
+      sound: "/resources/characters_knight/sounds/ATTACK3.wav",
+    },
+    HURT: {
+      frames: 4,
+      src: "/resources/characters_knight/HURT.png",
+      sound: "/resources/characters_knight/sounds/HURT.wav",
+    },
+    DEATH: {
+      frames: 12,
+      src: "/resources/characters_knight/DEATH.png",
+      sound: "/resources/characters_knight/sounds/DEATH.mp3",
+    },
+    WALK: { frames: 8, src: "/resources/characters_knight/RUN.png" },
+    isMeelee: true,
+  },
+  characters_wizard: {
+    IDLE: { frames: 8, src: "/resources/characters_wizard/IDLE.png" },
+    ATTACK_1: { frames: 7, src: "/resources/characters_wizard/ATTACK_1.png" },
+    ATTACK_2: { frames: 9, src: "/resources/characters_wizard/ATTACK_2.png" },
+    ATTACK_3: { frames: 16, src: "/resources/characters_wizard/ATTACK_3.png" },
+    HURT: { frames: 4, src: "/resources/characters_wizard/HURT.png" },
+    DEATH: { frames: 4, src: "/resources/characters_wizard/DEATH.png" },
+    WALK: { frames: 8, src: "/resources/characters_wizard/RUN.png" },
+    bottomOffset: 40,
+    isMeelee: false,
+  },
 };
 
 const DEMON_SPRITES: CharacterSprites = {
@@ -40,4 +65,4 @@ const SKELETON_SPRITES: CharacterSprites = {
   bottomOffset: -35,
 };
 
-export { PLAYER_SPRITES, PLAYER_2_SPRITES, DEMON_SPRITES, SKELETON_SPRITES };
+export { DEMON_SPRITES, SKELETON_SPRITES, CHARACTER_SPRITES };
