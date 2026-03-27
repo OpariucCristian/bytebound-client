@@ -24,22 +24,17 @@ const Dashboard = () => {
   const { changeTrack } = useMusic();
   const { isAudioPlaying } = useAudio();
 
-  const { data: userInfo, isLoading } = useQuery({
+  const { data: player, isLoading } = useQuery({
     queryKey: playerQueryKeys.byUid(user?.id || ""),
     queryFn: () => getPlayerByUid(),
+    
     enabled: !!user?.id,
   });
 
-  const isHeroSelectModalDefaultOpen = isLoading
-    ? false
-    : userInfo?.hero?.id
-      ? false
-      : true;
-
-  const xpPercentage = (userInfo?.xp / userInfo?.neededXp) * 100;
+  const xpPercentage = (player?.xp / player?.neededXp) * 100;
 
   const [isHeroSelectModalOpen, setIsHeroSelectModalOpen] = useState<boolean>(
-    isHeroSelectModalDefaultOpen,
+    false,
   );
 
   useEffect(() => {
@@ -47,6 +42,12 @@ const Dashboard = () => {
       changeTrack(MusicTracks.MENU);
     }
   }, []);
+
+  useEffect(() => {
+  if (!isLoading && !player?.hero?.id) {
+    setIsHeroSelectModalOpen(true);
+  }
+}, [isLoading, player?.hero?.id]);
 
   if (!user) return null;
 
@@ -60,9 +61,9 @@ const Dashboard = () => {
             className="inline h-12 w-64 md:h-12 mr-4"
           />
           <div className="flex space-x-5">
-            {!isLoading && userInfo.hero && (
+            {!isLoading && player.hero && (
               <div onClick={() => setIsHeroSelectModalOpen(true)}>
-                <HeroIcon hero={(userInfo as Player)?.hero} />
+                <HeroIcon hero={(player as Player)?.hero} />
               </div>
             )}
             <ArcadeButton
@@ -90,7 +91,7 @@ const Dashboard = () => {
               </div>
               <div className="text-right">
                 <p className="text-muted-foreground text-sm">LEVEL</p>
-                <h2 className="text-4xl text-accent">{userInfo?.lvl}</h2>
+                <h2 className="text-4xl text-accent">{player?.lvl}</h2>
               </div>
             </div>
 
@@ -98,8 +99,8 @@ const Dashboard = () => {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-foreground">XP</span>
                 <span className="text-muted-foreground">
-                  {userInfo?.xp}{" "}
-                  {userInfo?.neededXp ? ` / ${userInfo?.neededXp}` : ""} XP
+                  {player?.xp}{" "}
+                  {player?.neededXp ? ` / ${player?.neededXp}` : ""} XP
                 </span>
               </div>
               <Progress value={xpPercentage} className="h-4" />
@@ -108,12 +109,12 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-border">
               <div>
                 <p className="text-muted-foreground text-xs">TOTAL XP</p>
-                <p className="text-xl text-foreground">{userInfo?.xp}</p>
+                <p className="text-xl text-foreground">{player?.xp}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">NEXT LEVEL</p>
                 <p className="text-xl text-foreground">
-                  {userInfo?.neededXp - userInfo?.xp} XP
+                  {player?.neededXp - player?.xp} XP
                 </p>
               </div>
             </div>

@@ -92,7 +92,7 @@ export default function Player({
     <div
       className={cn(
         "absolute bottom-0 transition-all",
-        playerAttacking && "translate-x-12",
+        (playerAttacking && sprites.isMeelee) && "translate-x-12",
         // start at left-36, then transition to left-80 once intro has started
         !hasIntroStarted ? "left-20 sm:left-28 lg-custom:left-32 md:left-36" : "left-48 sm:left-64 lg-custom:left-80 md:left-56",
       )}
