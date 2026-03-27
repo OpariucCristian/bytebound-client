@@ -94,13 +94,17 @@ export default {
           },
         },
         "pulse-glow": {
-          "0%, 100%": {
+        "0%": {
             opacity: "1",
-            boxShadow: "0 0 20px currentColor",
+            boxShadow: "0 0 7px currentColor",
           },
           "50%": {
-            opacity: "0.8",
-            boxShadow: "0 0 30px currentColor",
+            opacity: "1",
+            boxShadow: "0 0 10px currentColor",
+          },
+           "100%": {
+            opacity: "1",
+            boxShadow: "0 0 7px currentColor",
           },
         },
         "blink": {
