@@ -252,6 +252,10 @@ const Game = () => {
           answers: shuffleArray(result.data.answers),
         };
 
+        if (nextQuestion.enemy) {
+          setGame((prev) => ({ ...prev, enemy: nextQuestion.enemy }));
+        }
+
         const difficultyChanged = nextQuestion.isDifficultyChange;
         console.debug(
           "loadNextQuestion - isDifficultyChange:",
@@ -262,6 +266,7 @@ const Game = () => {
 
         if (difficultyChanged) {
           console.debug("Setting battle action to DIFFICULTY_CHANGE");
+          // setGame(prev => ({...prev, enemy: nextQuestion.enemy}))
           setBattleAction(BattleActionEnum.DIFFICULTY_CHANGE);
           changeTrack(MusicTracks.BATTLE_2);
         } else {
@@ -436,8 +441,8 @@ const Game = () => {
               action={battleAction}
               onIntroComplete={handleIntroComplete}
               questionDifficulty={currentQuestion?.difficulty}
-              player={player.hero}
-              playerSprites={CHARACTER_SPRITES[player.hero.spriteKey]}
+              hero={player.hero}
+              enemy={game.enemy}
             />
           )}
         </div>
