@@ -1,26 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/shared/lib/utils";
-import Enemy from "./Enemy";
-import Player from "./Player";
-import { BattleAction, BattleActionEnum } from "@/features/game/types/gameTypes";
+import EnemyComponent from "./Enemy";
+import PlayerComponent from "./Player";
+import {
+  BattleAction,
+  BattleActionEnum,
+} from "@/features/game/types/gameTypes";
 import { getEnemySpritePerDifficulty } from "@/shared/utils/spriteUtils";
-import { CharacterSprites } from "../../types/characterTypes";
 import { Hero } from "@/shared/services/heroService";
+import { CHARACTER_SPRITES, ENEMY_SPRITES } from "@/shared/utils/spriteConfigs";
+import { Enemy } from "@/shared/services/enemyService";
 
 interface BattleSceneProps {
   action: BattleAction;
   onIntroComplete?: () => void;
   questionDifficulty?: number;
-  player: Hero;
-  playerSprites: CharacterSprites
+  hero: Hero;
+  enemy: Enemy;
 }
 
 export default function BattleScene({
   action,
   onIntroComplete,
   questionDifficulty,
-  player,
-  playerSprites
+  hero,
+  enemy,
 }: BattleSceneProps) {
   const [playerIntroComplete, setPlayerIntroComplete] = useState(false);
   const [enemyIntroComplete, setEnemyIntroComplete] = useState(false);
@@ -28,7 +32,10 @@ export default function BattleScene({
 
   useEffect(() => {
     // Reset enemy intro complete when difficulty changes
-    if (action === "difficulty-change" && previousAction !== "difficulty-change") {
+    if (
+      action === "difficulty-change" &&
+      previousAction !== "difficulty-change"
+    ) {
       setEnemyIntroComplete(false);
     }
     setPreviousAction(action);
@@ -39,15 +46,30 @@ export default function BattleScene({
       onIntroComplete?.();
     }
     // Only call onIntroComplete if we've actually reset and the animation completed
-    if (enemyIntroComplete && action === "difficulty-change" && previousAction === "difficulty-change") {
+    if (
+      enemyIntroComplete &&
+      action === "difficulty-change" &&
+      previousAction === "difficulty-change"
+    ) {
       onIntroComplete?.();
     }
-  }, [playerIntroComplete, enemyIntroComplete, action, previousAction, onIntroComplete]);
+  }, [
+    playerIntroComplete,
+    enemyIntroComplete,
+    action,
+    previousAction,
+    onIntroComplete,
+  ]);
+
+  const player_sprites = useMemo(() => {
+    const sprites = CHARACTER_SPRITES[hero.spriteKey];
+    return sprites;
+  }, [hero.spriteKey]);
 
   const enemy_sprites = useMemo(() => {
-    const difficulty = questionDifficulty ?? 1;
-    return getEnemySpritePerDifficulty(difficulty);
-  }, [questionDifficulty]);
+    const sprites = ENEMY_SPRITES[enemy.spriteKey];
+    return sprites;
+  }, [enemy.spriteKey]);
 
   return (
     <div className="relative w-full max-w-[60rem] h-40 sm:h-48 md:h-52 border-2 overflow-hidden">
@@ -57,15 +79,13 @@ export default function BattleScene({
         style={{ imageRendering: "pixelated" }}
       />
 
-      {/* Player (Left Side) */}
-      <Player
+      <PlayerComponent
         action={action}
-        sprites={playerSprites}
+        sprites={player_sprites}
         onIntroComplete={() => setPlayerIntroComplete(true)}
       />
 
-      {/* Enemy (Right Side) */}
-      <Enemy
+      <EnemyComponent
         action={action}
         sprites={enemy_sprites}
         onIntroComplete={() => setEnemyIntroComplete(true)}
@@ -77,7 +97,7 @@ export default function BattleScene({
           <p
             className={cn(
               "text-xl font-bold arcade-text animate-pulse",
-              action === "player-attack" ? "text-neon-green" : "text-red-500"
+              action === "player-attack" ? "text-neon-green" : "text-red-500",
             )}
           >
             {action === BattleActionEnum.PLAYER_ATTACK && "CORRECT ANSWER!"}

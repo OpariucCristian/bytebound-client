@@ -13,7 +13,7 @@ const HeroCard = (props: HeroCardProps) => {
       <ArcadeCard className="flex flex-col bg-[#212121] justify-center items-center gap-5 w-64 h-80 hover:animate-pulse-glow cursor-pointer">
         <div className="overflow-hidden h-50">
           <img
-            src={`/resources/${hero.spriteKey}/hud/thumbnail.png`}
+            src={`/resources/characters/player/${hero.spriteKey}/hud/thumbnail.png`}
             className="w-52 h-50 object-cover"
           />
         </div>

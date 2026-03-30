@@ -1,5 +1,6 @@
-import { httpService } from './httpService';
-import { Player } from './playerService';
+import { Enemy } from "./enemyService";
+import { httpService } from "./httpService";
+import { Player } from "./playerService";
 
 // Game Types
 export interface Game {
@@ -12,6 +13,7 @@ export interface Game {
   score: number;
   lives: number;
   gameState: string;
+  enemy: Enemy;
 }
 
 export interface CreateNewGameDto {
@@ -30,6 +32,7 @@ export interface ReadNewGameDto {
   playerId: string;
   firstQuestion?: QuestionPoolDto;
   playerLives: number;
+  enemy: Enemy;
 }
 
 export interface QuestionPoolDto {
@@ -40,6 +43,7 @@ export interface QuestionPoolDto {
   answers: AnswerDto[];
   questionSeconds: number;
   isDifficultyChange: boolean;
+  enemy: Enemy | null;
 }
 
 export interface AnswerDto {
@@ -54,7 +58,7 @@ export interface GameStatsDto {
   wrongAnswers: number;
   xpGained: number;
   createdAt: Date;
-  player?: Player
+  player?: Player;
 }
 
 interface CheckAnswerDto {
@@ -70,20 +74,35 @@ export const gameQueryKeys = {
 };
 
 // Service functions
-export const startNewGame = async (data: CreateNewGameDto): Promise<ReadNewGameDto> => {
-  return httpService.post<ReadNewGameDto, CreateNewGameDto>('games/gameInstance/new', data);
+export const startNewGame = async (
+  data: CreateNewGameDto,
+): Promise<ReadNewGameDto> => {
+  return httpService.post<ReadNewGameDto, CreateNewGameDto>(
+    "games/gameInstance/new",
+    data,
+  );
 };
 
-export const checkGameAnswer = async (gameId: string, answerId: number): Promise<boolean> => {
-  return httpService.post<boolean, CheckAnswerDto>(`games/gameInstance/checkAnswer/${gameId}`, { answerId });
+export const checkGameAnswer = async (
+  gameId: string,
+  answerId: number,
+): Promise<boolean> => {
+  return httpService.post<boolean, CheckAnswerDto>(
+    `games/gameInstance/checkAnswer/${gameId}`,
+    { answerId },
+  );
 };
 
 export const timeoutQuestion = async (gameId: string): Promise<void> => {
   return httpService.post<void>(`games/gameInstance/timeoutQuestion/${gameId}`);
 };
 
-export const getNextQuestion = async (gameId: string): Promise<QuestionPoolDto> => {
-  return httpService.get<QuestionPoolDto>(`games/gameInstance/nextQuestion/${gameId}`);
+export const getNextQuestion = async (
+  gameId: string,
+): Promise<QuestionPoolDto> => {
+  return httpService.get<QuestionPoolDto>(
+    `games/gameInstance/nextQuestion/${gameId}`,
+  );
 };
 
 export const getGameStats = async (gameId: string): Promise<GameStatsDto> => {
