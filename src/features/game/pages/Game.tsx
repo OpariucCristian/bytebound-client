@@ -442,7 +442,7 @@ const Game = () => {
               onIntroComplete={handleIntroComplete}
               questionDifficulty={currentQuestion?.difficulty}
               hero={player.hero}
-              enemy={game.enemy}
+              enemy={{...game.enemy, enemyLives: currentQuestion.enemyLives}}
             />
           )}
         </div>

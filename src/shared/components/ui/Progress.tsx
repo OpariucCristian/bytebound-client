@@ -6,7 +6,7 @@ import { cn } from "@/shared/lib/utils";
 type ProgressProps = React.ComponentPropsWithoutRef<typeof ProgressRoot>;
 
 const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
-  ({ className, value, ...props }, ref) => (
+  ({ className, value, max, ...props }, ref) => (
     <ProgressRoot
       ref={ref}
       className={cn("relative h-4 w-full overflow-hidden rounded-full bg-secondary", className)}
@@ -14,7 +14,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
     >
       <ProgressIndicator
         className="h-full w-full flex-1 bg-primary transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        style={{ transform: `translateX(-${max || 100 - (value || 0)}%)` }}
       />
     </ProgressRoot>
   ),

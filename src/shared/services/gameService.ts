@@ -44,6 +44,7 @@ export interface QuestionPoolDto {
   questionSeconds: number;
   isDifficultyChange: boolean;
   enemy: Enemy | null;
+  enemyLives?: number;
 }
 
 export interface AnswerDto {

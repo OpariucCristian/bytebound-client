@@ -10,13 +10,14 @@ import { getEnemySpritePerDifficulty } from "@/shared/utils/spriteUtils";
 import { Hero } from "@/shared/services/heroService";
 import { CHARACTER_SPRITES, ENEMY_SPRITES } from "@/shared/utils/spriteConfigs";
 import { Enemy } from "@/shared/services/enemyService";
+import { Progress } from "@/shared/components/ui/Progress";
 
 interface BattleSceneProps {
   action: BattleAction;
   onIntroComplete?: () => void;
   questionDifficulty?: number;
   hero: Hero;
-  enemy: Enemy;
+  enemy: Enemy & { enemyLives?: number };
 }
 
 export default function BattleScene({
@@ -78,6 +79,32 @@ export default function BattleScene({
         className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-bottom opacity-90"
         style={{ imageRendering: "pixelated" }}
       />
+        
+            <div className="absolute top-0 right-0  gap-2 mt-2 mr-2">
+              <p className="text-end text-sm">{enemy.name}</p>
+                <div className="flex flex-row-reverse">
+                  {[...Array(enemy.baseHealth)].map((_, i) => (
+                    <div key={i} title={`Life ${i + 1}`}>
+                      {i < enemy.enemyLives && (
+                        <span className="flex items-center justify-center h-full text-sm">
+                          <img
+                            src={"/resources/hud/heart-full.png"}
+                            className="w-5 h-5"
+                          />
+                        </span>
+                      )}
+                      {!(i < enemy.enemyLives) && (
+                        <span className="flex items-center justify-center h-full text-sm">
+                          <img
+                            src={"/resources/hud/heart-empty.png"}
+                            className="w-5 h-5"
+                          />
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  </div>
+                </div>
 
       <PlayerComponent
         action={action}
@@ -85,12 +112,18 @@ export default function BattleScene({
         onIntroComplete={() => setPlayerIntroComplete(true)}
       />
 
-      <EnemyComponent
-        action={action}
-        sprites={enemy_sprites}
-        onIntroComplete={() => setEnemyIntroComplete(true)}
-      />
-
+      <div>
+        <EnemyComponent
+          action={action}
+          sprites={enemy_sprites}
+          onIntroComplete={() => setEnemyIntroComplete(true)}
+        />
+      </div>
+      {/* <Progress
+        max={enemy.baseHealth}
+        value={enemy.enemyLives ? enemy.enemyLives : enemy.baseHealth}
+      /> */}
+         
       {/* Action Text */}
       {action !== "idle" && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 text-center">

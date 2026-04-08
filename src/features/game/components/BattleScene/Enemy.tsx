@@ -145,7 +145,6 @@ export default function Enemy({
           transform: enemyFlip ? "scaleX(-1)" : "none",
         }}
       />
-
     </div>
   );
 }
