@@ -203,7 +203,7 @@ const Game = () => {
         }, 1500);
       } else {
         // Trigger enemy attack animation
-        const newLives = game.playerLives - 1;
+        const newLives = game.playerLives - game.enemy.baseAttack;
 
         if (newLives <= 0) {
           setBattleAction(BattleActionEnum.ENEMY_WIN);
@@ -325,7 +325,7 @@ const Game = () => {
               <div className="w-40">
                 <p className="text-muted-foreground text-sm">ENDLESS</p>
                 <div className="flex gap-2 mt-2">
-                  {[...Array(3)].map((_, i) => (
+                  {[...Array(player.hero.baseHealth)].map((_, i) => (
                     <div key={i} title={`Life ${i + 1}`}>
                       {i < game.playerLives && (
                         <span className="flex items-center justify-center h-full text-sm">

@@ -45,6 +45,7 @@ export interface QuestionPoolDto {
   isDifficultyChange: boolean;
   enemy: Enemy | null;
   enemyLives?: number;
+  playerLives?: number;
 }
 
 export interface AnswerDto {
@@ -54,6 +55,7 @@ export interface AnswerDto {
 
 export interface GameStatsDto {
   playerId: string;
+  gameId: string;
   correctAnswers: number;
   correctAnswersStreakMax: number;
   wrongAnswers: number;

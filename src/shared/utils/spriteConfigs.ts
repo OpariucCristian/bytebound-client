@@ -35,7 +35,7 @@ const CHARACTER_SPRITES = {
     ATTACK_2: { frames: 9, src: "/resources/characters/player/hero_wizard/ATTACK_2.png" },
     ATTACK_3: { frames: 16, src: "/resources/characters/player/hero_wizard/ATTACK_3.png" },
     HURT: { frames: 4, src: "/resources/characters/player/hero_wizard/HURT.png" },
-    DEATH: { frames: 4, src: "/resources/characters/player/hero_wizard/DEATH.png" },
+    DEATH: { frames: 7, src: "/resources/characters/player/hero_wizard/DEATH.png" },
     WALK: { frames: 8, src: "/resources/characters/player/hero_wizard/RUN.png" },
     bottomOffset: 40,
     isMeelee: false,
