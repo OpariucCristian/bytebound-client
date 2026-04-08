@@ -22,6 +22,8 @@ export default function Enemy({
   const walkIntroTimerRef = useRef<NodeJS.Timeout | null>(null);
   const difficultyChangeStartedRef = useRef(false);
 
+  console.log(sprites)
+
   const { currentSprite, framePercentage, updateSpriteAnimation } =
     useSpriteAnimation({
       action: isPlayingDeath ? BattleActionEnum.IDLE : action,
@@ -143,7 +145,6 @@ export default function Enemy({
           transform: enemyFlip ? "scaleX(-1)" : "none",
         }}
       />
-
     </div>
   );
 }

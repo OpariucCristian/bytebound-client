@@ -107,6 +107,10 @@
     border: 3px solid hsl(var(--border));
     box-shadow: 0 4px 0 hsl(var(--border) / 0.5);
   }
+
+  .arcade-border-shadowless {
+    border: 3px solid hsl(var(--border));
+  }
   
   .pixel-corners {
     clip-path: polygon(

@@ -47,7 +47,7 @@ const Results = () => {
           <p className="text-xl text-secondary"></p>
         </div>
 
-        {gameStats?.correctAnswers && (
+        {gameStats?.gameId && (
           <>
             {/* Results Card */}
             <ArcadeCard glow={false} className="mb-8">

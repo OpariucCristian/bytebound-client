@@ -1,13 +1,13 @@
-import { DEMON_SPRITES, SKELETON_SPRITES } from "./spriteConfigs";
+import { ENEMY_SPRITES } from "./spriteConfigs";
 
 export const getEnemySpritePerDifficulty = (difficulty: number) => {
     console.debug("Getting enemy sprites for difficulty:", difficulty);
   switch (difficulty) {
     case 1:
-        return DEMON_SPRITES;
+        return ENEMY_SPRITES.enemy_demon;
     case 2:
-        return SKELETON_SPRITES;
+        return ENEMY_SPRITES.enemy_skeleton;
     default:
-        return DEMON_SPRITES;
+        return ENEMY_SPRITES.enemy_demon;
   }
 };
