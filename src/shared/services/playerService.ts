@@ -1,3 +1,4 @@
+import { Hero } from './heroService';
 import { httpService } from './httpService';
 
 // Player Types
@@ -9,6 +10,7 @@ export interface Player {
   xp?: number;
   neededXp?: number;
   userName: string | null;
+  hero?: Hero | null;
 }
 
 export interface CreatePlayerDto {
@@ -29,4 +31,8 @@ export const playerQueryKeys = {
 // Service functions
 export const getPlayerByUid = async (): Promise<Player> => {
   return httpService.get<Player>(`players`);
+};
+
+export const assignHero = async (heroId: string): Promise<void> => {
+  return httpService.patch<void>(`players/hero/${heroId}`)
 };
