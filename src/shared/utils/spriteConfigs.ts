@@ -70,6 +70,15 @@ enemy_imp: {
   WALK: { frames: 4, src: "/resources/characters/enemy/enemy_imp/WALK.png" },
   size: 128,
   bottomOffset: 35,
+},
+enemy_werewolf: {
+  IDLE: { frames: 4, src: "/resources/characters/enemy/enemy_werewolf/IDLE.png" },
+  ATTACK: { frames: 9, src: "/resources/characters/enemy/enemy_werewolf/ATTACK.png" },
+  HURT: { frames: 5, src: "/resources/characters/enemy/enemy_werewolf/HURT.png" },
+  DEATH: { frames: 9, src: "/resources/characters/enemy/enemy_werewolf/DEATH.png" },
+  WALK: { frames: 4, src: "/resources/characters/enemy/enemy_werewolf/WALK.png" },
+  size: 128,
+  bottomOffset: 35,
 }
 }
 
