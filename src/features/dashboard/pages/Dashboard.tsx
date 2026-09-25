@@ -10,6 +10,10 @@ import {
   playerQueryKeys,
 } from "@/shared/services/playerService";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  getVersusStats,
+  versusQueryKeys,
+} from "@/shared/services/versusService";
 import { useMusic } from "@/shared/hooks/useMusic";
 import { useAudio } from "@/shared/contexts/AudioContext";
 import { MusicTracks } from "@/shared/utils/musicUtils";
@@ -28,6 +32,12 @@ const Dashboard = () => {
     queryKey: playerQueryKeys.byUid(user?.id || ""),
     queryFn: () => getPlayerByUid(),
     
+    enabled: !!user?.id,
+  });
+
+  const { data: versusStats } = useQuery({
+    queryKey: versusQueryKeys.stats(),
+    queryFn: getVersusStats,
     enabled: !!user?.id,
   });
 
@@ -106,7 +116,7 @@ const Dashboard = () => {
               <Progress value={xpPercentage} className="h-4" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-border">
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t-2 border-border">
               <div>
                 <p className="text-muted-foreground text-xs">TOTAL XP</p>
                 <p className="text-xl text-foreground">{player?.xp}</p>
@@ -115,6 +125,14 @@ const Dashboard = () => {
                 <p className="text-muted-foreground text-xs">NEXT LEVEL</p>
                 <p className="text-xl text-foreground">
                   {player?.neededXp - player?.xp} XP
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-muted-foreground text-xs">1V1 W / L / D</p>
+                <p className="text-xl text-foreground">
+                  {versusStats
+                    ? `${versusStats.wins} / ${versusStats.losses} / ${versusStats.draws}`
+                    : "-"}
                 </p>
               </div>
             </div>

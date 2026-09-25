@@ -12,6 +12,7 @@ import Login from "@/features/auth/pages/Login";
 import CategorySelect from "@/features/game/pages/CategorySelect";
 import Game from "@/features/game/pages/Game";
 import Results from "@/features/game/pages/Results";
+import Versus from "@/features/versus/pages/Versus";
 import NotFound from "@/pages/NotFound";
 import { MusicProvider } from "@/shared/contexts/MusicContext";
 import { AudioButton } from "@/shared/components/ui/AudioButton";
@@ -48,6 +49,7 @@ const AppRoutes = ({ clerkPublishableKey }: AppProps) => {
             <Route path="/category" element={<CategorySelect />} />
             <Route path="/game" element={<Game />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/versus" element={<Versus />} />
             <Route path="/scoreboard" element={<Scoreboard />} />
           </Route>
           <Route path="*" element={<NotFound />} />

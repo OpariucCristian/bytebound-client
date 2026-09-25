@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArcadeButton } from "@/shared/components/ArcadeButton";
-import { ArcadeCard } from "@/shared/components/ArcadeCard";
 import BattleScene from "@/features/game/components/BattleScene/BattleScene";
+import { LivesBar } from "@/features/game/components/LivesBar";
+import { QuestionPanel } from "@/features/game/components/QuestionPanel";
 import {
   ReadNewGameDto,
   type AnswerResultDto,
@@ -304,28 +305,11 @@ const Game = () => {
             >
               <div className="w-40">
                 <p className="text-muted-foreground text-sm">ENDLESS</p>
-                <div className="flex gap-2 mt-2">
-                  {[...Array(player.hero.baseHealth)].map((_, i) => (
-                    <div key={i} title={`Life ${i + 1}`}>
-                      {i < game.playerLives && (
-                        <span className="flex items-center justify-center h-full text-sm">
-                          <img
-                            src={"/resources/hud/heart-full.png"}
-                            className="w-9 h-9"
-                          />
-                        </span>
-                      )}
-                      {!(i < game.playerLives) && (
-                        <span className="flex items-center justify-center h-full text-sm">
-                          <img
-                            src={"/resources/hud/heart-empty.png"}
-                            className="w-9 h-9"
-                          />
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <LivesBar
+                  className="mt-2"
+                  lives={game.playerLives}
+                  maxLives={player.hero.baseHealth}
+                />
               </div>
               <div className="text-center w-40">
                 <p className="text-muted-foreground text-sm">TIME</p>
@@ -352,39 +336,16 @@ const Game = () => {
                 </p>
               </div>
             </div>
-            {/* Question */}
-            <ArcadeCard
-              glow={false}
-              className={`h-32 mb-6 text-center transition-opacity duration-1000 ${
+            {/* Question and answers */}
+            <QuestionPanel
+              text={currentQuestion.text}
+              answers={currentQuestion.answers}
+              onSelect={handleAnswerSelect}
+              disabled={isUiLocked}
+              className={`transition-opacity duration-1000 ${
                 battleAction === "idle" ? "animate-in fade-in" : ""
               }`}
-            >
-              <h2 className="text-lg md:text-xl text-foreground leading-relaxed">
-                {currentQuestion.text}
-              </h2>
-            </ArcadeCard>
-            {/* Answers */}
-            <div
-              className={`grid md:grid-cols-2 gap-4 transition-opacity duration-1000 ${
-                battleAction === "idle" ? "animate-in fade-in" : ""
-              }`}
-            >
-              {currentQuestion.answers.map((answer) => {
-                const variant: "primary" | "accent" | "danger" = "primary";
-
-                return (
-                  <ArcadeButton
-                    key={answer.id}
-                    variant={variant}
-                    onClick={() => handleAnswerSelect(answer.id)}
-                    disabled={isUiLocked}
-                    className="w-full h-auto min-h-[80px] whitespace-normal text-left"
-                  >
-                    {answer.text}
-                  </ArcadeButton>
-                );
-              })}
-            </div>
+            />
             {/* Stats */}
             <div
               className={`mt-6 flex justify-around transition-opacity duration-500 ${

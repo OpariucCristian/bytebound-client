@@ -10,12 +10,18 @@ interface PlayerProps {
   action: BattleAction;
   sprites: CharacterSprites;
   onIntroComplete?: () => void;
+  /** Which side of the scene the hero stands on. The right side faces left. */
+  side?: "left" | "right";
+  /** Plays no sounds and leaves the music alone (e.g. the opponent in 1v1). */
+  muted?: boolean;
 }
 
 export default function Player({
   action,
   sprites,
   onIntroComplete,
+  side = "left",
+  muted = false,
 }: PlayerProps) {
   const [hasIntroStarted, setHasIntroStarted] = useState(false);
 
@@ -57,13 +63,13 @@ export default function Player({
       case BattleActionEnum.PLAYER_ATTACK:
 
         updateSpriteAnimation(randomAttack);
-        if (randomAttack?.sound) {
+        if (randomAttack?.sound && !muted) {
           playSoundEffect(randomAttack.sound);
         }
         return;
       case BattleActionEnum.ENEMY_ATTACK:
         updateSpriteAnimation(sprites.HURT);
-        if (sprites.HURT.sound) {
+        if (sprites.HURT.sound && !muted) {
           playSoundEffect(sprites.HURT.sound);
         }
         return;
@@ -72,6 +78,7 @@ export default function Player({
         return;
       case BattleActionEnum.ENEMY_WIN:
         updateSpriteAnimation(sprites.DEATH);
+        if (muted) return;
         stopMusic();
         if (sprites.DEATH?.sound) {
           playSoundEffect(sprites.DEATH.sound);
@@ -84,6 +91,16 @@ export default function Player({
   }, [action, sprites]);
 
   const playerAttacking = action === BattleActionEnum.PLAYER_ATTACK;
+  const isRight = side === "right";
+
+  // The hero walks in from its edge of the scene.
+  const position = isRight
+    ? !hasIntroStarted
+      ? "right-20 sm:right-28 lg-custom:right-32 md:right-36"
+      : "right-48 sm:right-64 lg-custom:right-80 md:right-56"
+    : !hasIntroStarted
+      ? "left-20 sm:left-28 lg-custom:left-32 md:left-36"
+      : "left-48 sm:left-64 lg-custom:left-80 md:left-56";
 
   const playerSize = sprites.size || 128;
   const playerBottomOffset = sprites.bottomOffset ?? 0;
@@ -92,9 +109,8 @@ export default function Player({
     <div
       className={cn(
         "absolute bottom-0 transition-all",
-        (playerAttacking && sprites.isMeelee) && "translate-x-12",
-        // start at left-36, then transition to left-80 once intro has started
-        !hasIntroStarted ? "left-20 sm:left-28 lg-custom:left-32 md:left-36" : "left-48 sm:left-64 lg-custom:left-80 md:left-56",
+        playerAttacking && sprites.isMeelee && (isRight ? "-translate-x-12" : "translate-x-12"),
+        position,
       )}
       style={{
         bottom: `${playerBottomOffset}px`,
@@ -111,6 +127,7 @@ export default function Player({
           backgroundPosition: `${framePercentage}% 0`,
           backgroundRepeat: "no-repeat",
           imageRendering: "pixelated",
+          transform: isRight ? "scaleX(-1)" : undefined,
         }}
       />
 
