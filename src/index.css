@@ -22,7 +22,7 @@
 
     /* Orange Secondary */
     --secondary: 25 95% 53%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary-foreground: 0 0% 13%;
 
     --muted: 0 0% 25%;
     --muted-foreground: 0 0% 70%;
@@ -31,8 +31,8 @@
     --accent: 48 96% 53%;
     --accent-foreground: 0 0% 13%;
 
-    --destructive: 0 85% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 85% 68%;
+    --destructive-foreground: 0 0% 13%;
 
     --border: 0 0% 35%;
     --input: 0 0% 22%;
@@ -44,46 +44,6 @@
     --neon-green: 120 100% 50%;
     --neon-purple: 280 100% 60%;
     --arcade-shadow: 0 0 8px;
-    
-    --sidebar-background: 230 30% 12%;
-    --sidebar-foreground: 180 100% 90%;
-    --sidebar-primary: 180 100% 50%;
-    --sidebar-primary-foreground: 230 35% 7%;
-    --sidebar-accent: 230 25% 20%;
-    --sidebar-accent-foreground: 180 100% 90%;
-    --sidebar-border: 180 80% 40%;
-    --sidebar-ring: 180 100% 50%;
-  }
-
-  .dark {
-    /* Same as root for consistent arcade theme */
-    --background: 230 35% 7%;
-    --foreground: 180 100% 90%;
-    --card: 230 30% 12%;
-    --card-foreground: 180 100% 90%;
-    --popover: 230 30% 12%;
-    --popover-foreground: 180 100% 90%;
-    --primary: 180 100% 50%;
-    --primary-foreground: 230 35% 7%;
-    --secondary: 320 100% 60%;
-    --secondary-foreground: 230 35% 7%;
-    --muted: 230 25% 20%;
-    --muted-foreground: 180 50% 70%;
-    --accent: 60 100% 60%;
-    --accent-foreground: 230 35% 7%;
-    --destructive: 0 85% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 180 80% 40%;
-    --input: 230 25% 20%;
-    --ring: 180 100% 50%;
-    --sidebar-background: 230 30% 12%;
-    --sidebar-foreground: 180 100% 90%;
-    --sidebar-primary: 180 100% 50%;
-    --sidebar-primary-foreground: 230 35% 7%;
-    --sidebar-accent: 230 25% 20%;
-    --sidebar-accent-foreground: 180 100% 90%;
-    --sidebar-border: 180 80% 40%;
-    --sidebar-ring: 180 100% 50%;
   }
 }
 

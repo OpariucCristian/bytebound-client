@@ -95,16 +95,23 @@ const Dashboard = () => {
       <div className="w-full max-w-[60rem] mx-auto">
         {/* Header: logo over the actions on phones, side by side from sm up */}
         <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 mb-4">
-          <img
-            src="/resources/images/logo-long.png"
-            alt="ByteBound"
-            className="h-auto w-56 sm:h-12 sm:w-64"
-          />
+          <h1>
+            <img
+              src="/resources/images/logo-long.png"
+              alt="ByteBound"
+              className="h-auto w-56 sm:h-12 sm:w-64"
+            />
+          </h1>
           <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-3 sm:gap-5">
             {player.hero && (
-              <div onClick={() => setIsHeroSelectModalOpen(true)}>
+              <button
+                type="button"
+                aria-label={`Change hero, currently ${player.hero.name}`}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={() => setIsHeroSelectModalOpen(true)}
+              >
                 <HeroIcon hero={(player as Player)?.hero} />
-              </div>
+              </button>
             )}
             <ArcadeButton
               variant="secondary"
@@ -129,13 +136,13 @@ const Dashboard = () => {
             <div className="flex justify-between items-center gap-6">
               <div className="min-w-0">
                 <p className="text-muted-foreground text-sm">PLAYER</p>
-                <h2 className="text-xl sm:text-2xl text-secondary break-words">
+                <p className="text-xl sm:text-2xl text-secondary break-words">
                   {user.username}
-                </h2>
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-muted-foreground text-sm">LEVEL</p>
-                <h2 className="text-3xl sm:text-4xl text-accent">{player.lvl}</h2>
+                <p className="text-3xl sm:text-4xl text-accent">{player.lvl}</p>
               </div>
             </div>
 
@@ -175,7 +182,7 @@ const Dashboard = () => {
         {/* Main Menu */}
         <ArcadeCard>
           <div className="text-center space-y-6">
-            <h3 className="text-2xl text-primary mb-8">MAIN MENU</h3>
+            <h2 className="text-2xl text-primary mb-8">MAIN MENU</h2>
 
             <ArcadeButton
               variant="primary"
@@ -201,9 +208,16 @@ const Dashboard = () => {
         </ArcadeCard>
       </div>
 
-      <Dialog open={isHeroSelectModalOpen} title="Choose your hero">
-        <h2>You can change it anytime.</h2>
-        <HeroPicker onChange={setIsHeroSelectModalOpen} />
+      {/* A first hero is required; after that the picker can be closed */}
+      <Dialog
+        open={isHeroSelectModalOpen}
+        onOpenChange={player.hero ? setIsHeroSelectModalOpen : undefined}
+        title="Choose your hero"
+        body={<HeroPicker onChange={setIsHeroSelectModalOpen} />}
+        cancelLabel="CLOSE"
+        onCancel={player.hero ? () => setIsHeroSelectModalOpen(false) : undefined}
+      >
+        {player.hero ? "You can change it anytime." : "Pick one to start. You can change it anytime."}
       </Dialog>
     </div>
   );

@@ -68,7 +68,7 @@ const VersusLobby = ({ session, category, categoryName }: VersusLobbyProps) => {
   if (state.lobby === "connecting") {
     return (
       <ArcadeCard glow={false} className="text-center space-y-4 py-12">
-        <p className="text-xl text-primary animate-blink">CONNECTING...</p>
+        <p className="text-xl text-primary animate-blink motion-reduce:animate-none">CONNECTING...</p>
         {showColdStartHint && (
           <p className="text-xs text-muted-foreground leading-relaxed">
             Waking up the game server. The first connection after a quiet
@@ -82,7 +82,7 @@ const VersusLobby = ({ session, category, categoryName }: VersusLobbyProps) => {
   if (state.lobby === "searching") {
     return (
       <ArcadeCard className="text-center space-y-6 py-12" glow>
-        <p className="text-xl text-primary animate-blink">
+        <p className="text-xl text-primary animate-blink motion-reduce:animate-none">
           SEARCHING FOR AN OPPONENT
         </p>
         <p className="text-sm text-muted-foreground">
@@ -117,7 +117,7 @@ const VersusLobby = ({ session, category, categoryName }: VersusLobbyProps) => {
             CLOSE ROOM
           </ArcadeButton>
         </div>
-        <p className="text-sm text-primary animate-blink">
+        <p className="text-sm text-primary animate-blink motion-reduce:animate-none">
           WAITING FOR A CHALLENGER...
         </p>
       </ArcadeCard>
@@ -128,7 +128,7 @@ const VersusLobby = ({ session, category, categoryName }: VersusLobbyProps) => {
     <div className="grid md:grid-cols-3 gap-6">
       <ArcadeCard className="flex flex-col justify-between gap-6 text-center">
         <div className="space-y-3">
-          <h3 className="text-lg text-primary">QUICK MATCH</h3>
+          <h2 className="text-lg text-primary">QUICK MATCH</h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Fight the next player looking for a duel in {categoryName}.
           </p>
@@ -140,7 +140,7 @@ const VersusLobby = ({ session, category, categoryName }: VersusLobbyProps) => {
 
       <ArcadeCard className="flex flex-col justify-between gap-6 text-center">
         <div className="space-y-3">
-          <h3 className="text-lg text-secondary">CREATE ROOM</h3>
+          <h2 className="text-lg text-secondary">CREATE ROOM</h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Get a code to challenge a friend.
           </p>

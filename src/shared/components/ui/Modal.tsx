@@ -11,14 +11,19 @@ import {
   Action as AlertDialogAction,
 } from "@radix-ui/react-alert-dialog";
 
+import { ArcadeButton } from "@/shared/components/ArcadeButton";
 import { cn } from "@/shared/lib/utils";
 
 interface ModalProps {
   trigger?: React.ReactNode;
   open?: boolean;
+  /** Also lets Escape close the dialog. Leave it out for a required choice. */
   onOpenChange?: (open: boolean) => void;
   title: string;
+  /** Short supporting text, read out with the title. */
   children?: React.ReactNode;
+  /** Interactive content (pickers, forms) shown below the description. */
+  body?: React.ReactNode;
   confirmLabel?: string;
   cancelLabel?: string;
   onConfirm?: () => void;
@@ -32,6 +37,7 @@ const Modal = ({
   onOpenChange,
   title,
   children,
+  body,
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
   onConfirm,
@@ -41,54 +47,49 @@ const Modal = ({
   <AlertDialogRoot open={open} onOpenChange={onOpenChange}>
     {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
     <AlertDialogPortal>
-      <AlertDialogOverlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      <AlertDialogOverlay className="fixed inset-0 z-50 bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:animate-none" />
       <AlertDialogContent
+        // Without a description, don't point screen readers at a missing one
+        {...(!children && { "aria-describedby": undefined })}
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto -translate-x-1/2 -translate-y-1/2 p-4 sm:p-6",
           "bg-card text-card-foreground arcade-border",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "motion-reduce:animate-none",
         )}
       >
         <AlertDialogTitle className="mb-2 text-lg text-primary">
           {title}
         </AlertDialogTitle>
         {children && (
-          <AlertDialogDescription className="mb-6 text-sm text-muted-foreground">
+          <AlertDialogDescription className="mb-6 text-sm leading-relaxed text-muted-foreground">
             {children}
           </AlertDialogDescription>
         )}
-        <div className="flex justify-end gap-3">
-          {onCancel && (
-            <AlertDialogCancel
-              onClick={onCancel}
-              className={cn(
-                "font-pixel border px-6 py-3 text-sm transition-all duration-150",
-                "bg-muted text-muted-foreground hover:bg-muted/80 border-border",
-                "shadow-[0_4px_0_0_hsl(var(--border))]",
-                "active:translate-y-1 active:shadow-none active:brightness-75",
-              )}
-            >
-              {cancelLabel}
-            </AlertDialogCancel>
-          )}
-          {onConfirm && (
-            <AlertDialogAction
-              onClick={onConfirm}
-              className={cn(
-                "font-pixel border px-6 py-3 text-sm transition-all duration-150",
-                variant === "danger"
-                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-border"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-border",
-                "shadow-[0_4px_0_0_hsl(var(--border))]",
-                "active:translate-y-1 active:shadow-none active:brightness-75",
-              )}
-            >
-              {confirmLabel}
-            </AlertDialogAction>
-          )}
-        </div>
+        {body}
+        {(onCancel || onConfirm) && (
+          <div className={cn("flex flex-wrap justify-end gap-3", body && "mt-6")}>
+            {onCancel && (
+              <AlertDialogCancel asChild>
+                <ArcadeButton variant="primary" onClick={onCancel}>
+                  {cancelLabel}
+                </ArcadeButton>
+              </AlertDialogCancel>
+            )}
+            {onConfirm && (
+              <AlertDialogAction asChild>
+                <ArcadeButton
+                  variant={variant === "danger" ? "danger" : "secondary"}
+                  onClick={onConfirm}
+                >
+                  {confirmLabel}
+                </ArcadeButton>
+              </AlertDialogAction>
+            )}
+          </div>
+        )}
       </AlertDialogContent>
     </AlertDialogPortal>
   </AlertDialogRoot>

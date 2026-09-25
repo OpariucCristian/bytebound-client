@@ -82,13 +82,18 @@ export default function BattleScene({
         
             <div className="absolute top-0 right-0  gap-2 mt-2 mr-2">
               <p className="text-end text-sm">{enemy.name}</p>
-                <div className="flex flex-row-reverse">
+                <div
+                  className="flex flex-row-reverse"
+                  role="img"
+                  aria-label={`${Math.max(enemy.enemyLives, 0)} of ${enemy.baseHealth} lives left`}
+                >
                   {[...Array(enemy.baseHealth)].map((_, i) => (
-                    <div key={i} title={`Life ${i + 1}`}>
+                    <div key={i}>
                       {i < enemy.enemyLives && (
                         <span className="flex items-center justify-center h-full text-sm">
                           <img
                             src={"/resources/hud/heart-full.png"}
+                            alt=""
                             className="w-5 h-5"
                           />
                         </span>
@@ -97,6 +102,7 @@ export default function BattleScene({
                         <span className="flex items-center justify-center h-full text-sm">
                           <img
                             src={"/resources/hud/heart-empty.png"}
+                            alt=""
                             className="w-5 h-5"
                           />
                         </span>
@@ -129,8 +135,8 @@ export default function BattleScene({
         <div className="absolute top-4 left-1/2 -translate-x-1/2 text-center">
           <p
             className={cn(
-              "text-xl font-bold arcade-text animate-pulse",
-              action === "player-attack" ? "text-neon-green" : "text-red-500",
+              "text-xl font-bold arcade-text animate-pulse motion-reduce:animate-none",
+              action === "player-attack" ? "text-neon-green" : "text-destructive",
             )}
           >
             {action === BattleActionEnum.PLAYER_ATTACK && "CORRECT ANSWER!"}

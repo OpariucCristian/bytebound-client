@@ -15,12 +15,12 @@ export const LoadingScreen = ({ label = "LOADING..." }: LoadingScreenProps) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-10 p-4">
-      <h2
+      <p
         role="status"
         className="text-2xl text-primary text-center animate-blink motion-reduce:animate-none"
       >
         {label}
-      </h2>
+      </p>
       {showServer && <ServerStatusLine className="max-w-sm" />}
     </div>
   );

@@ -28,15 +28,17 @@ export const ErrorPanel = ({
   fullScreen = false,
   className,
 }: ErrorPanelProps) => {
+  const Heading = fullScreen ? "h1" : "h2";
   const panel = (
     <ArcadeCard
       glow={false}
       className={cn("w-full max-w-xl text-center space-y-6", className)}
     >
       <div role="alert" className="space-y-4">
-        <h2 className="text-xl md:text-2xl text-destructive leading-relaxed">
+        {/* A full-screen error is the page, so it carries the page heading */}
+        <Heading className="text-xl md:text-2xl text-destructive leading-relaxed">
           {title}
-        </h2>
+        </Heading>
         <p className="text-sm leading-relaxed text-muted-foreground break-words">
           {message}
         </p>

@@ -207,7 +207,7 @@ export const TitleVignette = () => {
             <p
               className={cn(
                 "absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm sm:text-xl font-bold animate-pulse motion-reduce:animate-none",
-                question.correct ? "text-neon-green" : "text-red-500",
+                question.correct ? "text-neon-green" : "text-destructive",
               )}
             >
               {question.correct ? "CORRECT ANSWER!" : "WRONG ANSWER!"}

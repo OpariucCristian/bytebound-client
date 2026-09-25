@@ -115,9 +115,9 @@ export default function DuelScene({
         <div className="absolute top-4 left-1/2 -translate-x-1/2 text-center whitespace-nowrap">
           <p
             className={cn(
-              "text-base sm:text-xl font-bold arcade-text animate-pulse",
+              "text-base sm:text-xl font-bold arcade-text animate-pulse motion-reduce:animate-none",
               banner.tone === "good" && "text-neon-green",
-              banner.tone === "bad" && "text-red-500",
+              banner.tone === "bad" && "text-destructive",
               banner.tone === "neutral" && "text-accent",
             )}
           >

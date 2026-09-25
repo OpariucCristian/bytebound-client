@@ -274,7 +274,7 @@ const VersusMatchView = ({ session, onFinished }: VersusMatchViewProps) => {
                   glow={false}
                   className="min-h-28 md:h-32 mb-4 md:mb-6 flex items-center justify-center text-center"
                 >
-                  <p className="text-sm sm:text-lg text-muted-foreground animate-blink">
+                  <p className="text-sm sm:text-lg text-muted-foreground animate-blink motion-reduce:animate-none">
                     ROUND {round.round}: GET READY...
                   </p>
                 </ArcadeCard>

@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { TitleVignette } from '@/features/auth/components/TitleVignette';
 import { ArcadeButton } from '@/shared/components/ArcadeButton';
+import { cn } from '@/shared/lib/utils';
 import { ServerStatusLine } from '@/shared/components/ServerStatusLine';
 import { startGuestSession } from '@/shared/services/guestSession';
 import { getPlayerByUid, playerQueryKeys } from '@/shared/services/playerService';
@@ -97,7 +98,7 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
   const onPlay = user?.isGuest ? () => navigate('/') : () => void playAsGuest();
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 pt-10 pb-28 lg:px-12 lg:py-16">
+    <div className="min-h-screen flex items-center justify-center px-4 pt-10 pb-28 lg:px-12 lg:py-16">
       {/*
         Desktop: the way in on the left (logo, PLAY NOW, accounts), the demo on
         the right spanning the same height. Phones stack logo, PLAY NOW, demo,
@@ -121,7 +122,11 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
               <ArcadeButton
                 variant="primary"
                 size="lg"
-                className="w-full py-5 text-lg lg:text-xl"
+                className={cn(
+                  "w-full h-auto py-5 whitespace-normal leading-relaxed",
+                  // A guest name makes the label long, so it steps down a size
+                  user?.isGuest ? "text-base lg:text-lg" : "text-lg lg:text-xl",
+                )}
                 disabled={isBusy}
                 onClick={onPlay}
               >
@@ -184,7 +189,7 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
           </>
         )}
       </div>
-    </main>
+    </div>
   );
 };
 

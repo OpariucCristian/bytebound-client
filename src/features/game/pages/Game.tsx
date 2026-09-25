@@ -351,6 +351,16 @@ const GameRun = ({ onRetry }: GameRunProps) => {
         the stats.
       */}
       <div className="w-full max-w-[60rem] mx-auto flex flex-col">
+        <h1 className="sr-only">Endless battle</h1>
+        {/* What the battle scene shows, read out for screen readers */}
+        <p className="sr-only" aria-live="polite">
+          {battleAction === BattleActionEnum.PLAYER_ATTACK && "Correct answer. Your hero strikes."}
+          {battleAction === BattleActionEnum.ENEMY_ATTACK &&
+            `Wrong answer. ${game.playerLives} ${game.playerLives === 1 ? "life" : "lives"} left.`}
+          {battleAction === BattleActionEnum.ENEMY_WIN && "Wrong answer. You are out of lives."}
+          {battleAction === BattleActionEnum.DIFFICULTY_CHANGE && "Enemy defeated. A new enemy appears."}
+          {battleAction === BattleActionEnum.IDLE && questionCountDown === 5 && "5 seconds left."}
+        </p>
         {/* Header */}
         {battleAction !== "start-game" && (
           <>

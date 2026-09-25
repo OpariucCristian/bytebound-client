@@ -92,9 +92,9 @@ const CategorySelect = () => {
                   onClick={() => handleCategorySelect(category.id)}
                   className="w-full text-center space-y-4 p-4"
                 >
-                  <h3 className={`text-xl ${category.color}`}>
+                  <h2 className={`text-xl ${category.color}`}>
                     {category.name}
-                  </h3>
+                  </h2>
                 </button>
               </ArcadeCard>
             ))}
@@ -103,9 +103,9 @@ const CategorySelect = () => {
 
         <ArcadeCard>
           <div className="text-center space-y-4">
-            <h4 className="text-lg text-secondary">
+            <h2 className="text-lg text-secondary">
               ENDLESS · {PLAY_STYLES[playStyle].label}
-            </h4>
+            </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {PLAY_STYLES[playStyle].rules}
             </p>

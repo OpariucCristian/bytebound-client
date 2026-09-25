@@ -4,17 +4,17 @@ const CHARACTER_SPRITES = {
     ATTACK_1: {
       frames: 6,
       src: "/resources/characters/player/hero_knight/ATTACK1.png",
-      sound: "/resources/characters/player/hero_knight/sounds/ATTACK1.wav",
+      sound: "/resources/characters/player/hero_knight/sounds/ATTACK1.mp3",
     },
     ATTACK_2: {
       frames: 5,
       src: "/resources/characters/player/hero_knight/ATTACK2.png",
-      sound: "/resources/characters/player/hero_knight/sounds/ATTACK2.wav",
+      sound: "/resources/characters/player/hero_knight/sounds/ATTACK2.mp3",
     },
     ATTACK_3: {
       frames: 6,
       src: "/resources/characters/player/hero_knight/ATTACK3.png",
-      sound: "/resources/characters/player/hero_knight/sounds/ATTACK3.wav",
+      sound: "/resources/characters/player/hero_knight/sounds/ATTACK3.mp3",
     },
     HURT: {
       frames: 4,
@@ -61,6 +61,15 @@ enemy_skeleton: {
   size: 208,
   flipHorizontal: true,
   bottomOffset: -35,
+},
+enemy_imp: {
+  IDLE: { frames: 4, src: "/resources/characters/enemy/enemy_imp/IDLE.png" },
+  ATTACK: { frames: 9, src: "/resources/characters/enemy/enemy_imp/ATTACK.png" },
+  HURT: { frames: 5, src: "/resources/characters/enemy/enemy_imp/HURT.png" },
+  DEATH: { frames: 9, src: "/resources/characters/enemy/enemy_imp/DEATH.png" },
+  WALK: { frames: 4, src: "/resources/characters/enemy/enemy_imp/WALK.png" },
+  size: 128,
+  bottomOffset: 35,
 }
 }
 

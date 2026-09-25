@@ -4,14 +4,14 @@ import type { ClerkProviderProps } from '@clerk/react';
 export const clerkAppearance: ClerkProviderProps['appearance'] = {
   variables: {
     colorPrimary: 'hsl(25 95% 53%)',
-    colorPrimaryForeground: 'hsl(0 0% 98%)',
+    colorPrimaryForeground: 'hsl(0 0% 13%)',
     colorBackground: 'hsl(0 0% 18%)',
     colorForeground: 'hsl(0 0% 98%)',
     colorMutedForeground: 'hsl(0 0% 70%)',
     colorInput: 'hsl(0 0% 22%)',
     colorInputForeground: 'hsl(0 0% 98%)',
     colorBorder: 'hsl(0 0% 35%)',
-    colorDanger: 'hsl(0 85% 60%)',
+    colorDanger: 'hsl(0 85% 68%)',
     colorNeutral: 'hsl(0 0% 98%)',
     borderRadius: '0',
     fontFamily: '"Press Start 2P", cursive',

@@ -86,7 +86,7 @@ const VersusResults = ({
 
       <ArcadeCard glow={false} className="space-y-6">
         <div className="text-center">
-          <h2 className="text-5xl text-accent mb-2">+{you?.xpGained ?? 0} XP</h2>
+          <p className="text-5xl text-accent mb-2">+{you?.xpGained ?? 0} XP</p>
           <p className="text-muted-foreground text-sm">EARNED THIS DUEL</p>
         </div>
 

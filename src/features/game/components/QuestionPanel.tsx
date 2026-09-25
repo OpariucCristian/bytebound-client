@@ -46,7 +46,7 @@ export const QuestionPanel = ({
             onClick={() => onSelect(answer.id)}
             disabled={disabled}
             className={cn(
-              "w-full h-auto min-h-[72px] md:min-h-[80px] px-3 md:px-6 text-xs md:text-sm whitespace-normal text-left",
+              "w-full h-auto min-h-[72px] md:min-h-[80px] px-3 md:px-6 text-xs md:text-sm whitespace-normal text-center",
               isCorrect &&
                 "ring-4 ring-neon-green disabled:opacity-100 animate-in fade-in",
               isWrongPick && "disabled:opacity-100",

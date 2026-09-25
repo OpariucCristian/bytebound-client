@@ -134,9 +134,9 @@ const Versus = () => {
 
             <ArcadeCard glow={false}>
               <div className="space-y-3 text-sm">
-                <h4 className="text-lg text-secondary text-center mb-4">
+                <h2 className="text-lg text-secondary text-center mb-4">
                   HOW A DUEL WORKS
-                </h4>
+                </h2>
                 <p>• You both get the same question at the same time.</p>
                 <p>• The first correct answer strikes your opponent.</p>
                 <p>• A wrong answer costs you a life and locks you out of the round.</p>

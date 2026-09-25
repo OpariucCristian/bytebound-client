@@ -12,7 +12,7 @@ export const ArcadeCard = ({ children, className, glow = false }: ArcadeCardProp
     <Card
       className={cn(
         'arcade-border bg-card p-6',
-        glow && 'animate-pulse-glow',
+        glow && 'animate-pulse-glow motion-reduce:animate-none',
         className
       )}
     >

@@ -95,9 +95,9 @@ const Results = () => {
             <ArcadeCard glow={false} className="mb-8">
               <div className="space-y-6">
                 <div className="text-center">
-                  <h2 className="text-4xl sm:text-5xl text-accent mb-2">
+                  <p className="text-4xl sm:text-5xl text-accent mb-2">
                     +{gameStats?.xpGained} XP
-                  </h2>
+                  </p>
                   <p className="text-muted-foreground">TOTAL EARNED</p>
                 </div>
 
@@ -146,13 +146,13 @@ const Results = () => {
             {/* Performance Message */}
             <ArcadeCard className="mb-8">
               <div className="text-center">
-                <h3 className="text-2xl text-secondary mb-4">
+                <h2 className="text-2xl text-secondary mb-4">
                   {gameStats?.correctAnswers >= 10
                     ? "EXCELLENT!"
                     : gameStats?.correctAnswers >= 5
                     ? "GOOD JOB!"
                     : "KEEP TRYING!"}
-                </h3>
+                </h2>
                 <p className="text-foreground">
                   {gameStats?.correctAnswers >= 10
                     ? `You answered ${gameStats?.correctAnswers} questions correctly! You're a true master!`

@@ -59,7 +59,7 @@ const Scoreboard = () => {
                 {/* Main Menu */}
                 <ArcadeCard className="px-4 sm:px-6">
                     <div className="text-center space-y-6">
-                        <h3 className="text-xl sm:text-2xl text-primary mb-8">SCOREBOARD</h3>
+                        <h1 className="text-xl sm:text-2xl text-primary mb-8">SCOREBOARD</h1>
 
                         <div className="min-h-72 flex items-center justify-center">
                             {isLoading ? (
