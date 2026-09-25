@@ -292,9 +292,10 @@ const VersusMatchView = ({ session, onFinished }: VersusMatchViewProps) => {
 
         {/* Duel, centered on screen during the intro */}
         <div
-          className={`transition-all ease-out ${
+          // Order set from the start so it never animates (see Game.tsx)
+          className={`order-2 md:order-3 transition-all ease-out ${
             introDone
-              ? "order-2 md:order-3 mb-4 md:mb-0 md:mt-4"
+              ? "mb-4 md:mb-0 md:mt-4"
               : "fixed inset-0 flex items-center justify-center p-4"
           }`}
           style={{ transitionDuration: "1500ms" }}

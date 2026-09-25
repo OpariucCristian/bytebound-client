@@ -437,10 +437,12 @@ const GameRun = ({ onRetry }: GameRunProps) => {
 
         {/* Battle Scene */}
         <div
-          className={`transition-all ease-out ${
+          // The order is set from the start: `order` is animatable, so adding
+          // it after the intro made the scene step through every slot on screen
+          className={`order-2 md:order-4 transition-all ease-out ${
             battleAction === "start-game"
               ? "fixed inset-0 flex items-center justify-center p-4"
-              : "order-2 md:order-4 mb-4 md:mb-0 md:mt-8"
+              : "mb-4 md:mb-0 md:mt-8"
           }`}
           style={{ transitionDuration: "1500ms" }}
         >
