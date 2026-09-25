@@ -6,6 +6,7 @@ import { ArcadeButton } from "@/shared/components/ArcadeButton";
 import { ArcadeCard } from "@/shared/components/ArcadeCard";
 import { getPlayerByUid, playerQueryKeys } from "@/shared/services/playerService";
 import { getGameStats, gameQueryKeys } from "@/shared/services/gameService";
+import { GuestNotice } from "@/features/auth/components/GuestNotice";
 
 interface LocationState {
   gameId: string;
@@ -121,6 +122,10 @@ const Results = () => {
               </div>
             </ArcadeCard>
           </>
+        )}
+
+        {user.isGuest && (
+          <GuestNotice title="THIS RUN WASN'T SAVED" className="mb-8" />
         )}
 
         {/* Action Buttons */}

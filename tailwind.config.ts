@@ -27,6 +27,20 @@ export default {
       colors: {
         'neon-green': 'hsl(120 100% 50%)',
         'neon-purple': 'hsl(280 100% 60%)',
+        plum: {
+          950: "hsl(var(--plum-950) / <alpha-value>)",
+          900: "hsl(var(--plum-900) / <alpha-value>)",
+          700: "hsl(var(--plum-700) / <alpha-value>)",
+        },
+        bone: {
+          DEFAULT: "hsl(var(--bone) / <alpha-value>)",
+          dim: "hsl(var(--bone-dim) / <alpha-value>)",
+        },
+        torch: "hsl(var(--torch) / <alpha-value>)",
+        crimson: {
+          DEFAULT: "hsl(var(--crimson) / <alpha-value>)",
+          bright: "hsl(var(--crimson-bright) / <alpha-value>)",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
