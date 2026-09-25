@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Check, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { PixelCursor } from "@/shared/components/PixelCursor";
 
 /**
- * A looping demo fight on the title screen: one question answered right (the
- * knight strikes) and one answered wrong (the demon hits back). It shows the
- * whole game in a few seconds, before anyone has to sign up.
+ * A looping demo of the game screen on the title page: one question answered
+ * right (the knight strikes) and one answered wrong (the demon hits back). It
+ * reuses the look of the real battle scene and answer buttons, so what people
+ * see here is what they'll play.
  */
 
 const TICK_MS = 110;
@@ -28,15 +27,26 @@ const KNIGHT = {
 const DEMON = {
   width: 81,
   height: 71,
+  baseHealth: 3,
   idle: { src: "/resources/characters/enemy/enemy_demon/IDLE.png", frames: 4 },
   attack: { src: "/resources/characters/enemy/enemy_demon/ATTACK.png", frames: 8 },
   hurt: { src: "/resources/characters/enemy/enemy_demon/HURT.png", frames: 4 },
 };
 
-// Real questions from the DSA pool
+// Real questions from the DSA pool, with the answer the demo player picks
 const QUESTIONS = [
-  { text: "Which data structure is Last-In-First-Out?", pick: "Stack", correct: true },
-  { text: "Which data structure is First-In-First-Out?", pick: "Stack", correct: false },
+  {
+    text: "Which data structure is Last-In-First-Out (LIFO)?",
+    answers: ["Stack", "Queue", "Linked list", "Heap"],
+    pick: 0,
+    correct: true,
+  },
+  {
+    text: "Which data structure is First-In-First-Out (FIFO)?",
+    answers: ["Queue", "Stack", "Binary tree", "Hash set"],
+    pick: 1,
+    correct: false,
+  },
 ];
 
 type BeatKind = "ask" | "resolve" | "rest";
@@ -48,12 +58,12 @@ interface Beat {
 }
 
 const BEATS: Beat[] = [
-  { kind: "ask", question: 0, ticks: 16 },
-  { kind: "resolve", question: 0, ticks: 12 },
-  { kind: "rest", question: 0, ticks: 10 },
-  { kind: "ask", question: 1, ticks: 16 },
+  { kind: "ask", question: 0, ticks: 18 },
+  { kind: "resolve", question: 0, ticks: 14 },
+  { kind: "rest", question: 0, ticks: 6 },
+  { kind: "ask", question: 1, ticks: 18 },
   { kind: "resolve", question: 1, ticks: 14 },
-  { kind: "rest", question: 1, ticks: 10 },
+  { kind: "rest", question: 1, ticks: 6 },
 ];
 
 const prefersReducedMotion = () =>
@@ -69,14 +79,12 @@ const Sprite = ({
   frame,
   width,
   height,
-  flip = false,
   className,
 }: {
   sheet: Sheet;
   frame: number;
   width: number;
   height: number;
-  flip?: boolean;
   className?: string;
 }) => (
   <div
@@ -89,7 +97,6 @@ const Sprite = ({
       backgroundPosition: `${-frame * width * SCALE}px 0`,
       backgroundRepeat: "no-repeat",
       imageRendering: "pixelated",
-      transform: flip ? "scaleX(-1)" : undefined,
     }}
   />
 );
@@ -116,9 +123,10 @@ export const TitleVignette = () => {
   const beat = BEATS[beatIndex];
   const question = QUESTIONS[beat.question];
   const t = tick - beatStart;
-  const resolving = beat.kind === "resolve";
-  const heroWins = resolving && question.correct;
-  const demonWins = resolving && !question.correct;
+  const answered = beat.kind !== "ask";
+  const heroWins = beat.kind === "resolve" && question.correct;
+  const demonWins = beat.kind === "resolve" && !question.correct;
+  const demonLives = question.correct && answered ? DEMON.baseHealth - 1 : DEMON.baseHealth;
 
   let knight: { sheet: Sheet; frame: number } = {
     sheet: KNIGHT.idle,
@@ -140,8 +148,6 @@ export const TitleVignette = () => {
     if (hurt !== null) knight = { sheet: KNIGHT.hurt, frame: hurt };
   }
 
-  const showVerdict = beat.kind !== "ask";
-
   return (
     <figure className="w-full">
       <figcaption className="sr-only">
@@ -149,14 +155,31 @@ export const TitleVignette = () => {
         wrong and the enemy hits back.
       </figcaption>
 
-      <div aria-hidden="true">
-        {/* Stage */}
-        <div className="rpg-window relative h-44 overflow-hidden !bg-plum-950">
+      <div aria-hidden="true" className="flex flex-col gap-3">
+        {/* Battle scene, as in the game */}
+        <div className="relative h-44 border-2 overflow-hidden">
           <div
-            className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-[center_85%] opacity-80"
+            className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-[center_85%] opacity-90"
             style={{ imageRendering: "pixelated" }}
           />
-          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-plum-950/70 to-transparent" />
+
+          <div className="absolute top-0 right-0 mt-2 mr-2">
+            <p className="text-end text-xs">Demon</p>
+            <div className="mt-1 flex flex-row-reverse">
+              {Array.from({ length: DEMON.baseHealth }, (_, i) => (
+                <img
+                  key={i}
+                  src={
+                    i < demonLives
+                      ? "/resources/hud/heart-full.png"
+                      : "/resources/hud/heart-empty.png"
+                  }
+                  alt=""
+                  className="w-5 h-5"
+                />
+              ))}
+            </div>
+          </div>
 
           <Sprite
             {...knight}
@@ -171,41 +194,45 @@ export const TitleVignette = () => {
             {...demon}
             width={DEMON.width}
             height={DEMON.height}
-            flip
             className={cn(
               "absolute bottom-[-10px] right-[4%] sm:right-[14%] transition-transform duration-150 ease-out",
               demonWins && t < DEMON.attack.frames && "-translate-x-6",
             )}
           />
+
+          {beat.kind === "resolve" && (
+            <p
+              className={cn(
+                "absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm arcade-glow animate-pulse motion-reduce:animate-none",
+                question.correct ? "text-neon-green" : "text-red-500",
+              )}
+            >
+              {question.correct ? "CORRECT ANSWER!" : "WRONG ANSWER!"}
+            </p>
+          )}
         </div>
 
-        {/* Dialogue box */}
-        <div className="rpg-window mt-3 px-5 py-4 text-xs leading-relaxed">
-          <p className="text-bone min-h-[3.25em]">{question.text}</p>
-          <div className="mt-3 flex items-center gap-3">
-            <PixelCursor
-              className={cn(
-                "h-3 w-3 text-torch",
-                beat.kind === "ask" && !reducedMotion && "animate-blink",
-              )}
-            />
-            <span className="text-torch">{question.pick}</span>
-            {showVerdict && (
-              <span
+        {/* Question and answers, as in the game */}
+        <div className="arcade-border bg-card px-4 py-3 text-center">
+          <p className="text-xs leading-relaxed text-foreground">{question.text}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {question.answers.map((answer, i) => {
+            const picked = answered && i === question.pick;
+            return (
+              <div
+                key={answer}
                 className={cn(
-                  "ml-auto flex items-center gap-2",
-                  question.correct ? "text-torch" : "text-bone-dim",
+                  "bg-primary text-primary-foreground px-3 py-2 text-center text-xs leading-relaxed transition-all duration-150",
+                  "shadow-[0_4px_0_0_hsl(var(--border))]",
+                  picked && "translate-y-1 shadow-none brightness-75",
+                  answered && !picked && "opacity-50",
                 )}
               >
-                {question.correct ? (
-                  <Check className="h-4 w-4" strokeWidth={3} />
-                ) : (
-                  <X className="h-4 w-4 text-crimson-bright" strokeWidth={3} />
-                )}
-                {question.correct ? "HERO STRIKES" : "ENEMY HITS BACK"}
-              </span>
-            )}
-          </div>
+                {answer}
+              </div>
+            );
+          })}
         </div>
       </div>
     </figure>

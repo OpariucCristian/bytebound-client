@@ -37,9 +37,9 @@ export const ServerStatusLine = ({ className }: { className?: string }) => {
 
       {state === "waking" && (
         <div aria-hidden="true" className="flex flex-col gap-2">
-          <div className="flex items-baseline justify-between gap-4 text-bone">
+          <div className="flex items-baseline justify-between gap-4 text-foreground">
             <span>WAKING THE SERVER</span>
-            <span className="tabular-nums text-bone-dim">{formatElapsed(elapsed)}</span>
+            <span className="tabular-nums text-muted-foreground">{formatElapsed(elapsed)}</span>
           </div>
           <div className="flex gap-1">
             {Array.from({ length: SEGMENTS }, (_, i) => (
@@ -47,31 +47,31 @@ export const ServerStatusLine = ({ className }: { className?: string }) => {
                 key={i}
                 className={cn(
                   "h-2 flex-1",
-                  i < filled ? "bg-torch" : i === filled ? "bg-torch/60 animate-blink" : "bg-plum-700",
+                  i < filled ? "bg-accent" : i === filled ? "bg-accent animate-blink motion-reduce:animate-none" : "bg-muted",
                 )}
               />
             ))}
           </div>
-          <span className="text-bone-dim">
+          <span className="text-muted-foreground">
             Free hosting naps when nobody's playing. Up to a minute.
           </span>
         </div>
       )}
 
       {state === "ready" && (
-        <div aria-hidden="true" className="flex items-center gap-3 text-bone-dim">
-          <span className="h-2 w-2 bg-torch" />
+        <div aria-hidden="true" className="flex items-center gap-3 text-muted-foreground">
+          <span className="h-2 w-2 bg-neon-green" />
           SERVER READY
         </div>
       )}
 
       {state === "unreachable" && (
-        <div className="flex flex-wrap items-center justify-between gap-3 text-bone">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-foreground">
           <span aria-hidden="true">THE SERVER ISN'T ANSWERING</span>
           <button
             type="button"
             onClick={() => void waitForServer()}
-            className="text-torch underline underline-offset-4 decoration-2 hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-torch"
+            className="text-accent underline underline-offset-4 decoration-2 hover:text-foreground"
           >
             TRY AGAIN
           </button>

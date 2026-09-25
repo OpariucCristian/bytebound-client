@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { ArcadeButton } from '@/shared/components/ArcadeButton';
+import { ArcadeCard } from '@/shared/components/ArcadeCard';
 import { cn } from '@/shared/lib/utils';
 
 interface GuestNoticeProps {
@@ -12,27 +14,20 @@ export const GuestNotice = ({ title, className }: GuestNoticeProps) => {
   const navigate = useNavigate();
 
   return (
-    <section
-      aria-label="Guest run"
-      className={cn(
-        'rpg-window flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between',
-        className,
-      )}
+    <ArcadeCard
+      glow={false}
+      className={cn('flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between', className)}
     >
-      <div className="text-xs leading-relaxed">
-        <h2 className="text-bone">{title}</h2>
-        <p className="mt-2 text-bone-dim">
-          Guest progress isn't saved or ranked. Create an account to keep your
-          level from the next run on.
+      <section aria-label="Guest run" className="text-sm leading-relaxed">
+        <h2 className="text-accent">{title}</h2>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Guest progress isn't saved or ranked. Sign up to keep your level from
+          the next run on.
         </p>
-      </div>
-      <button
-        type="button"
-        onClick={() => navigate('/signup')}
-        className="shrink-0 bg-torch px-4 py-3 text-xs text-plum-950 hover:bg-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-torch"
-      >
-        CREATE ACCOUNT
-      </button>
-    </section>
+      </section>
+      <ArcadeButton variant="secondary" size="sm" className="shrink-0" onClick={() => navigate('/signup')}>
+        SIGN UP
+      </ArcadeButton>
+    </ArcadeCard>
   );
 };

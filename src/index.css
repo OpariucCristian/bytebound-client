@@ -40,16 +40,6 @@
 
     --radius: 0rem;
 
-    /* RPG world, pulled from the logo: plum shadows, bone text, torch gold, crimson */
-    --plum-950: 322 45% 6%;
-    --plum-900: 322 38% 11%;
-    --plum-700: 320 30% 24%;
-    --bone: 38 35% 90%;
-    --bone-dim: 30 16% 70%;
-    --torch: 42 95% 58%;
-    --crimson: 352 62% 42%;
-    --crimson-bright: 352 85% 66%;
-
     /* Retro Specific Colors */
     --neon-green: 120 100% 50%;
     --neon-purple: 280 100% 60%;
@@ -122,16 +112,6 @@
     border: 3px solid hsl(var(--border));
   }
   
-  /* A JRPG text window: bone frame, dark outline, plum inner bevel */
-  .rpg-window {
-    background: hsl(var(--plum-900) / 0.94);
-    border: 3px solid hsl(var(--bone-dim));
-    box-shadow:
-      0 0 0 3px hsl(var(--plum-950)),
-      inset 0 0 0 3px hsl(var(--plum-700)),
-      0 20px 40px -16px rgb(0 0 0 / 0.75);
-  }
-
   .pixel-corners {
     clip-path: polygon(
       0 8px, 8px 8px, 8px 0,
