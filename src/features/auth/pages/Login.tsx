@@ -98,13 +98,17 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
   const onPlay = user?.isGuest ? () => navigate('/') : () => void playAsGuest();
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-10 pb-28 lg:px-12 lg:py-16">
+    <div className="min-h-screen flex items-center lg:items-start justify-center px-4 pt-10 pb-28 lg:px-12 lg:py-16">
       {/*
         Desktop: the way in on the left (logo, PLAY NOW, accounts), the demo on
         the right spanning the same height. Phones stack logo, PLAY NOW, demo,
         then accounts, so the main action sits above the fold.
+
+        On desktop the layout is pinned where the menu sits when centred (it is
+        about 31rem tall), so opening sign in or sign up only grows the left
+        column downward and the demo never moves.
       */}
-      <div className="w-full max-w-[34rem] lg:max-w-[76rem] grid gap-8 lg:grid-cols-[24rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-x-20">
+      <div className="w-full max-w-[34rem] lg:max-w-[76rem] grid gap-8 lg:grid-cols-[24rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-x-20 lg:mt-[max(0px,calc(50vh-19.75rem))]">
         <header className="flex flex-col items-center text-center lg:items-start lg:text-left lg:col-start-1 lg:row-start-1">
           <h1 className="w-full flex justify-center lg:justify-start">
             <img
