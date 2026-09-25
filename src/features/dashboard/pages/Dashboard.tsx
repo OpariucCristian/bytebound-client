@@ -86,7 +86,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-muted-foreground text-sm">PLAYER</p>
                 <h2 className="text-2xl text-secondary">
-                  {user.user_metadata.username}
+                  {user.username}
                 </h2>
               </div>
               <div className="text-right">

@@ -1,19 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArcadeButton } from "@/shared/components/ArcadeButton";
 import { ArcadeCard } from "@/shared/components/ArcadeCard";
 import BattleScene from "@/features/game/components/BattleScene/BattleScene";
 import {
   ReadNewGameDto,
+  type AnswerResultDto,
   type QuestionPoolDto,
-  startNewGame as startNewGameService,
-  checkGameAnswer as checkGameAnswerService,
-  timeoutQuestion as timeoutQuestionService,
-  getNextQuestion as getNextQuestionService,
   gameQueryKeys,
 } from "@/shared/services/gameService";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
+import { useGameSession } from "@/features/game/hooks/useGameSession";
 import {
   getDifficultColor,
   shuffleArray,
@@ -57,10 +55,23 @@ const Game = () => {
   const [questionCountDown, setQuestionCountDown] = useState<number | null>(
     null,
   );
+  const [isStarting, setIsStarting] = useState(false);
+  const [isAwaitingServer, setIsAwaitingServer] = useState(false);
+  const [gameError, setGameError] = useState<string | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasAnsweredRef = useRef<boolean>(false);
 
   const queryClient = useQueryClient();
+
+  const session = useGameSession({
+    onQuestionTimeout: (result) => {
+      // The server ended the question: time ran out before an answer.
+      if (hasAnsweredRef.current) return;
+      hasAnsweredRef.current = true;
+      stopCountdown();
+      applyAnswerResult(result);
+    },
+  });
 
   const { data: player, isLoading } = useQuery({
     queryKey: playerQueryKeys.byUid(user?.id || ""),
@@ -69,58 +80,36 @@ const Game = () => {
     enabled: !!user?.id,
   });
 
-  const startNewGame = useMutation({
-    mutationFn: startNewGameService,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: gameQueryKeys.all });
-    },
-  });
-
-  const checkGameAnswer = useMutation({
-    mutationFn: ({ gameId, answerId }: { gameId: string; answerId: number }) =>
-      checkGameAnswerService(gameId, answerId),
-  });
-
-  const timeoutQuestion = useMutation({
-    mutationFn: ({ gameId }: { gameId: string }) =>
-      timeoutQuestionService(gameId),
-  });
-
-  const { refetch: fetchNextQuestion, isLoading: isLoadingNextQuestion } =
-    useQuery({
-      queryKey: gameQueryKeys.nextQuestion(game?.id || ""),
-      queryFn: () => getNextQuestionService(game?.id || ""),
-      enabled: false,
-    });
-
   const isUiLocked =
-    isLoadingNextQuestion ||
+    isAwaitingServer ||
     battleAction !== "idle" ||
-    checkGameAnswer.isPending ||
-    timeoutQuestion.isPending ||
+    questionCountDown <= 0 ||
     hasAnsweredRef.current;
 
   const startGame = async () => {
+    setIsStarting(true);
     try {
-      console.debug("Rendering Game Component");
-
-      const newGame = await startNewGame.mutateAsync({
+      const newGame = await session.startGame({
         type: "endless",
         category: category,
         difficulty: 1,
       });
+      queryClient.invalidateQueries({ queryKey: gameQueryKeys.all });
       changeTrack(MusicTracks.BATTLE_1);
       setCurrentQuestion(newGame.firstQuestion);
       setGame(newGame);
     } catch (err) {
       console.error("Failed to start game:", err);
+      setGameError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsStarting(false);
     }
   };
 
   const handleIntroComplete = () => {
     console.debug("handleIntroComplete called - setting to IDLE");
     setBattleAction(BattleActionEnum.IDLE);
-    startCountdown();
+    showQuestion();
   };
 
   // Start a new game on mount
@@ -140,6 +129,14 @@ const Game = () => {
     return () => stopCountdown();
   }, []);
 
+  // The question is on screen: start the visible countdown and the server's clock.
+  const showQuestion = () => {
+    startCountdown();
+    session
+      .questionReady()
+      .catch((err) => console.error("Failed to start question timer:", err));
+  };
+
   const startCountdown = () => {
     stopCountdown();
 
@@ -156,138 +153,123 @@ const Game = () => {
     }
   };
 
+  // When the countdown runs out we wait for the server's question timeout.
   useEffect(() => {
-    if (questionCountDown <= 0 && game?.id) {
-      // Time's up, treat as incorrect answer
-      handleAnswerSelect(-1, true);
+    if (questionCountDown <= 0) {
+      stopCountdown();
     }
-  }, [questionCountDown, game?.id]);
+  }, [questionCountDown]);
 
-  const handleAnswerSelect = async (answerId: number, isTimeout: boolean) => {
-    if (!game?.id || battleAction === "start-game" || hasAnsweredRef.current)
-      return;
+  const handleAnswerSelect = async (answerId: string) => {
+    if (!game?.id || isUiLocked) return;
 
     hasAnsweredRef.current = true;
     stopCountdown();
+    setIsAwaitingServer(true);
 
     try {
-      let isCorrect;
-      if (isTimeout) {
-        await timeoutQuestion.mutateAsync({ gameId: game?.id });
-        isCorrect = false;
-      } else {
-        isCorrect = await checkGameAnswer.mutateAsync({
-          gameId: game?.id,
-          answerId,
-        });
-      }
-
-      if (isCorrect) {
-        setBattleAction(BattleActionEnum.PLAYER_ATTACK);
-
-        const newStreak = stats.streak + 1;
-        const multiplier = Math.min(Math.floor(newStreak / 3) + 1, 5); // Max 5x multiplier
-        const baseXp = 75;
-        const xpGained = baseXp;
-
-        setStats({
-          ...stats,
-          correct: stats.correct + 1,
-          streak: newStreak,
-          totalXp: stats.totalXp + xpGained,
-        });
-
-        // Auto advance after 1.5s
-        setTimeout(() => {
-          loadNextQuestion();
-        }, 1500);
-      } else {
-        // Trigger enemy attack animation
-        const newLives = game.playerLives - game.enemy.baseAttack;
-
-        if (newLives <= 0) {
-          setBattleAction(BattleActionEnum.ENEMY_WIN);
-        } else {
-          setBattleAction(BattleActionEnum.ENEMY_ATTACK);
-        }
-
-        setGame((prev) => ({
-          ...prev,
-          playerLives: newLives,
-        }));
-
-        setStats({
-          ...stats,
-          wrong: stats.wrong + 1,
-          streak: 0,
-        });
-
-        setTimeout(() => {
-          if (newLives <= 0) {
-            navigate("/results", {
-              state: {
-                gameId: game.id,
-                category: game.category,
-                mode: "endless",
-              },
-            });
-          } else {
-            loadNextQuestion();
-          }
-        }, 1500);
-      }
+      const result = await session.submitAnswer(answerId);
+      applyAnswerResult(result);
     } catch (err) {
       console.error("Failed to check answer:", err);
+      setGameError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsAwaitingServer(false);
     }
+  };
+
+  const applyAnswerResult = (result: AnswerResultDto) => {
+    if (result.correct) {
+      setBattleAction(BattleActionEnum.PLAYER_ATTACK);
+
+      const baseXp = 75;
+      setStats((prev) => ({
+        ...prev,
+        correct: prev.correct + 1,
+        streak: prev.streak + 1,
+        totalXp: prev.totalXp + baseXp,
+      }));
+    } else {
+      setBattleAction(
+        result.gameOver
+          ? BattleActionEnum.ENEMY_WIN
+          : BattleActionEnum.ENEMY_ATTACK,
+      );
+      setStats((prev) => ({
+        ...prev,
+        wrong: prev.wrong + 1,
+        streak: 0,
+      }));
+    }
+
+    setGame((prev) => ({ ...prev, playerLives: result.playerLives }));
+
+    // Let the attack animation play before moving on
+    setTimeout(() => {
+      if (result.gameOver) {
+        navigate("/results", {
+          state: {
+            gameId: game.id,
+            category: game.category,
+            mode: "endless",
+          },
+        });
+      } else {
+        loadNextQuestion();
+      }
+    }, 1500);
   };
 
   const loadNextQuestion = async () => {
     if (!game?.id) return;
 
+    setIsAwaitingServer(true);
     try {
-      const result = await fetchNextQuestion();
-      if (result.data) {
-        const nextQuestion = {
-          ...result.data,
-          answers: shuffleArray(result.data.answers),
-        };
+      const question = await session.nextQuestion();
+      const nextQuestion = {
+        ...question,
+        answers: shuffleArray(question.answers),
+      };
 
-        if (nextQuestion.enemy) {
-          setGame((prev) => ({ ...prev, enemy: nextQuestion.enemy }));
-        }
+      if (nextQuestion.enemy) {
+        setGame((prev) => ({ ...prev, enemy: nextQuestion.enemy }));
+      }
 
-        const difficultyChanged = nextQuestion.isDifficultyChange;
-        console.debug(
-          "loadNextQuestion - isDifficultyChange:",
-          difficultyChanged,
-          "difficulty:",
-          nextQuestion.difficulty,
-        );
+      const difficultyChanged = nextQuestion.isDifficultyChange;
+      console.debug(
+        "loadNextQuestion - isDifficultyChange:",
+        difficultyChanged,
+        "difficulty:",
+        nextQuestion.difficulty,
+      );
 
-        if (difficultyChanged) {
-          console.debug("Setting battle action to DIFFICULTY_CHANGE");
-          // setGame(prev => ({...prev, enemy: nextQuestion.enemy}))
-          setBattleAction(BattleActionEnum.DIFFICULTY_CHANGE);
-          changeTrack(MusicTracks.BATTLE_2);
-        } else {
-          console.debug("Setting battle action to IDLE");
-          setBattleAction(BattleActionEnum.IDLE);
-        }
+      if (difficultyChanged) {
+        console.debug("Setting battle action to DIFFICULTY_CHANGE");
+        setBattleAction(BattleActionEnum.DIFFICULTY_CHANGE);
+        changeTrack(MusicTracks.BATTLE_2);
+      } else {
+        console.debug("Setting battle action to IDLE");
+        setBattleAction(BattleActionEnum.IDLE);
+      }
 
-        setCurrentQuestion(nextQuestion);
-        hasAnsweredRef.current = false;
+      setCurrentQuestion(nextQuestion);
+      hasAnsweredRef.current = false;
 
-        if (!difficultyChanged) {
-          startCountdown();
-        }
+      // After a difficulty change, the question is shown once the new
+      // enemy's intro finishes (handleIntroComplete).
+      if (!difficultyChanged) {
+        showQuestion();
       }
     } catch (err) {
       console.error("Failed to fetch next question:", err);
+      setGameError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsAwaitingServer(false);
     }
   };
 
-  const loading = startNewGame.isPending;
-  const error = startNewGame.error || checkGameAnswer.error;
+  const loading = isStarting;
+  const error = gameError || session.connectionError;
 
   if (loading) {
     return (
@@ -300,9 +282,7 @@ const Game = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center flex-col gap-4">
-        <h2 className="text-2xl text-destructive">
-          {error instanceof Error ? error.message : "An error occurred"}
-        </h2>
+        <h2 className="text-2xl text-destructive">{error}</h2>
         <ArcadeButton onClick={() => navigate("/category")}>
           Back to Category Select
         </ArcadeButton>
@@ -396,7 +376,7 @@ const Game = () => {
                   <ArcadeButton
                     key={answer.id}
                     variant={variant}
-                    onClick={() => handleAnswerSelect(answer.id, false)}
+                    onClick={() => handleAnswerSelect(answer.id)}
                     disabled={isUiLocked}
                     className="w-full h-auto min-h-[80px] whitespace-normal text-left"
                   >

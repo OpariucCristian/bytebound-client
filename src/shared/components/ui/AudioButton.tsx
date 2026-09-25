@@ -1,8 +1,6 @@
 import { Button } from "./Button";
 import { useAudio } from "@/shared/contexts/AudioContext";
 
-interface AudioButtonProps {}
-
 export const AudioButton = () => {
   const { isAudioPlaying, hasInteracted, startAudio, stopAudio, dismissReminder } = useAudio();
   const showReminder = !hasInteracted;

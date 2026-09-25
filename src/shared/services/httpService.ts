@@ -1,12 +1,10 @@
-import supabase from "@/shared/utils/supabase";
+import { getToken } from "@clerk/react";
 
-const API_BASE_URL =
+export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5165/api/";
 
-const getAuthToken = async (): Promise<string | null> => {
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token || null;
-};
+// Clerk refreshes the short-lived session token as needed
+export const getAuthToken = (): Promise<string | null> => getToken();
 
 const buildHeaders = async (): Promise<Headers> => {
   const headers = new Headers();

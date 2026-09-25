@@ -15,7 +15,7 @@ interface LocationState {
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
 
   const state = location.state as LocationState;
 
@@ -35,7 +35,7 @@ const Results = () => {
     if (!state || !user || playerError || gameStatsError) {
       navigate("/");
     }
-  }, [state, user, navigate, updateUser, gameStats, playerData]);
+  }, [state, user, navigate, gameStats, playerData]);
 
   if (!state || !user || gameStatsError || playerError) return null;
 
