@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/shared/lib/utils";
+import { ArcadeButton } from "@/shared/components/ArcadeButton";
+import { ArcadeCard } from "@/shared/components/ArcadeCard";
 
 /**
  * A looping demo of the game screen on the title page: one question answered
@@ -9,6 +11,8 @@ import { cn } from "@/shared/lib/utils";
  */
 
 const TICK_MS = 110;
+/** How long the clicked answer stays pressed down, in ticks. */
+const PRESS_TICKS = 2;
 const SCALE = 2;
 
 interface Sheet {
@@ -157,16 +161,11 @@ export const TitleVignette = () => {
 
       <div aria-hidden="true" className="flex flex-col gap-3">
         {/* Battle scene, as in the game */}
-        <div className="arcade-border relative h-40 sm:h-44 lg:h-[19rem] overflow-hidden">
+        <div className="relative h-40 sm:h-44 lg:h-[19rem] border-2 overflow-hidden">
           <div
             className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-[center_85%] opacity-90"
             style={{ imageRendering: "pixelated" }}
           />
-          {/* Sets the stage apart from the cave behind the page */}
-          <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.6)]" />
-
-          <p className="absolute top-0 left-0 mt-2 ml-3 text-xs text-accent arcade-glow">DEMO</p>
-
           <div className="absolute top-0 right-0 mt-2 mr-2">
             <p className="text-end text-xs">Demon</p>
             <div className="mt-1 flex flex-row-reverse">
@@ -207,7 +206,7 @@ export const TitleVignette = () => {
           {beat.kind === "resolve" && (
             <p
               className={cn(
-                "absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm arcade-glow animate-pulse motion-reduce:animate-none",
+                "absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm sm:text-xl font-bold animate-pulse motion-reduce:animate-none",
                 question.correct ? "text-neon-green" : "text-red-500",
               )}
             >
@@ -216,31 +215,34 @@ export const TitleVignette = () => {
           )}
         </div>
 
-        {/* Question and answers, as in the game */}
-        <div className="arcade-border bg-card px-4 py-3 text-center">
-          <p className="text-xs leading-relaxed text-foreground">{question.text}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
+        {/* Question and answers: the game's own card and buttons (see QuestionPanel) */}
+        <ArcadeCard glow={false} className="px-4 py-3 text-center">
+          <p className="text-xs sm:text-sm text-foreground leading-relaxed">{question.text}</p>
+        </ArcadeCard>
+        {/* inert: a demo, so the buttons can't be clicked or tabbed to */}
+        <div {...{ inert: "" }} className="grid grid-cols-2 gap-4">
           {question.answers.map((answer, i) => {
             const isPick = i === question.pick;
-            const picked = answered && isPick;
-            // Late in the "ask" beat the demo player hovers their choice
-            const hovering = !answered && isPick && t >= 9;
+            // The game's hover shade, just before the demo player clicks
+            const hovering = beat.kind === "ask" && isPick && t >= 12;
+            // The game's :active press, held for the moment of the click
+            const pressing = beat.kind === "resolve" && isPick && t < PRESS_TICKS;
+            // After an answer the game disables every button until the next question
+            const locked = answered && !(beat.kind === "resolve" && t < PRESS_TICKS);
             return (
-              <div
+              <ArcadeButton
                 key={answer}
+                variant="primary"
+                size="sm"
+                disabled={locked}
                 className={cn(
-                  // Card-toned so PLAY NOW stays the only white button on screen
-                  "bg-card text-foreground border-2 border-border px-3 py-2 text-center text-xs leading-relaxed transition-all duration-150",
-                  "shadow-[0_4px_0_0_hsl(var(--border))]",
-                  hovering && "border-accent text-accent",
-                  picked && "translate-y-1 shadow-none",
-                  picked && (question.correct ? "border-neon-green text-neon-green" : "border-red-500 text-red-500"),
-                  answered && !picked && "opacity-50",
+                  "w-full h-auto whitespace-normal",
+                  hovering && "bg-primary/90",
+                  pressing && "translate-y-1 shadow-none brightness-75",
                 )}
               >
                 {answer}
-              </div>
+              </ArcadeButton>
             );
           })}
         </div>
