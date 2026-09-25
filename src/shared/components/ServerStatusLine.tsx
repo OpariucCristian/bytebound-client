@@ -5,6 +5,7 @@ import { useServerStatus, waitForServer } from "@/shared/services/serverStatus";
 /** Roughly how long the free-tier server takes to wake. */
 const TYPICAL_WAKE_S = 60;
 const SEGMENTS = 12;
+const EXPLAIN_AFTER_S = 5;
 
 const formatElapsed = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
@@ -47,14 +48,17 @@ export const ServerStatusLine = ({ className }: { className?: string }) => {
                 key={i}
                 className={cn(
                   "h-2 flex-1",
-                  i < filled ? "bg-accent" : i === filled ? "bg-accent animate-blink motion-reduce:animate-none" : "bg-muted",
+                  i < filled ? "bg-accent" : i === filled ? "bg-accent opacity-50 animate-pulse motion-reduce:animate-none" : "bg-muted",
                 )}
               />
             ))}
           </div>
-          <span className="text-muted-foreground">
-            Free hosting naps when nobody's playing. Up to a minute.
-          </span>
+          {/* Most wakes are quick; only explain once the wait gets noticeable */}
+          {elapsed >= EXPLAIN_AFTER_S && (
+            <span className="text-muted-foreground">
+              Free hosting naps when nobody's playing. Up to a minute.
+            </span>
+          )}
         </div>
       )}
 

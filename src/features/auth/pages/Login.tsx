@@ -5,7 +5,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { TitleVignette } from '@/features/auth/components/TitleVignette';
 import { ArcadeButton } from '@/shared/components/ArcadeButton';
-import { ArcadeCard } from '@/shared/components/ArcadeCard';
 import { ServerStatusLine } from '@/shared/components/ServerStatusLine';
 import { startGuestSession } from '@/shared/services/guestSession';
 import { getPlayerByUid, playerQueryKeys } from '@/shared/services/playerService';
@@ -95,99 +94,95 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
           ? 'TRY AGAIN'
           : 'PLAY NOW';
 
+  const onPlay = user?.isGuest ? () => navigate('/') : () => void playAsGuest();
+
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 pt-10 pb-24 lg:px-8">
-      <div className="w-full max-w-[34rem] lg:max-w-[72rem] grid gap-10 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-16 lg:items-center">
-        {/* Left: title and the ways in */}
-        <div className="w-full flex flex-col items-center">
-          <h1 className="w-full flex justify-center">
+    <main className="min-h-screen flex items-center justify-center px-4 pt-10 pb-28 lg:px-12 lg:py-16">
+      {/*
+        Desktop: the way in on the left (logo, PLAY NOW, accounts), the demo on
+        the right spanning the same height. Phones stack logo, PLAY NOW, demo,
+        then accounts, so the main action sits above the fold.
+      */}
+      <div className="w-full max-w-[34rem] lg:max-w-[76rem] grid gap-8 lg:grid-cols-[24rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-x-20">
+        <header className="flex flex-col items-center text-center lg:items-start lg:text-left lg:col-start-1 lg:row-start-1">
+          <h1 className="w-full flex justify-center lg:justify-start">
             <img
               src="/resources/images/login.png"
               alt="ByteBound"
-              className="w-[min(100%,20rem)]"
+              className="w-[min(100%,18rem)] sm:w-[20rem] lg:w-full"
             />
           </h1>
-          <p className="mt-4 text-sm text-muted-foreground">LEVEL UP YOUR SKILLS</p>
+          <p className="mt-5 text-sm text-muted-foreground">LEVEL UP YOUR SKILLS</p>
+        </header>
 
-          {panel === 'menu' ? (
-            <div className="mt-8 w-full flex flex-col gap-6">
-              <ArcadeCard className="flex flex-col gap-4">
-                <ArcadeButton
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  disabled={isBusy}
-                  onClick={user?.isGuest ? () => navigate('/') : () => void playAsGuest()}
-                >
-                  <span aria-live="polite" className={isBusy ? 'animate-blink motion-reduce:animate-none' : undefined}>
-                    {playLabel}
-                  </span>
-                </ArcadeButton>
-                <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                  {user?.isGuest
-                    ? 'Pick up where you left off.'
-                    : "No account needed. Guest runs aren't saved or ranked."}
+        {panel === 'menu' ? (
+          <>
+            <section aria-label="Play" className="flex flex-col gap-4 lg:col-start-1 lg:row-start-2">
+              <ArcadeButton
+                variant="primary"
+                size="lg"
+                className="w-full py-5 text-lg lg:text-xl"
+                disabled={isBusy}
+                onClick={onPlay}
+              >
+                <span aria-live="polite" className={isBusy ? 'animate-blink motion-reduce:animate-none' : undefined}>
+                  {playLabel}
+                </span>
+              </ArcadeButton>
+              <p className="text-xs leading-relaxed text-muted-foreground text-balance">
+                {user?.isGuest
+                  ? 'Pick up where you left off.'
+                  : "No account needed. Guest runs aren't saved or ranked."}
+              </p>
+              {error && (
+                <p role="alert" className="text-xs leading-relaxed text-destructive">
+                  {error}
                 </p>
-
-                {error && (
-                  <p role="alert" className="text-center text-xs leading-relaxed text-destructive">
-                    {error}
-                  </p>
-                )}
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-border">
-                  <ArcadeButton
-                    variant="secondary"
-                    size="sm"
-                    className="w-full"
-                    disabled={isBusy}
-                    onClick={() => openPanel('sign-in')}
-                  >
-                    SIGN IN
-                  </ArcadeButton>
-                  <ArcadeButton
-                    variant="secondary"
-                    size="sm"
-                    className="w-full"
-                    disabled={isBusy}
-                    onClick={() => openPanel('sign-up')}
-                  >
-                    SIGN UP
-                  </ArcadeButton>
-                </div>
-              </ArcadeCard>
-
+              )}
               <ServerStatusLine />
+            </section>
+
+            <div className="lg:col-start-2 lg:row-start-1 lg:row-span-3">
+              <TitleVignette />
             </div>
-          ) : (
-            <div className="mt-8 w-full flex flex-col items-center gap-5">
-              <ArcadeButton variant="secondary" size="sm" className="self-start" onClick={backToMenu}>
+
+            <section
+              aria-label="Account"
+              className="flex flex-col gap-4 pt-5 border-t-2 border-border lg:col-start-1 lg:row-start-3 lg:self-end"
+            >
+              <p className="text-xs leading-relaxed text-muted-foreground text-balance">Keep your level and get ranked:</p>
+              <div className="grid grid-cols-2 gap-4">
+                <ArcadeButton variant="secondary" size="sm" className="w-full" disabled={isBusy} onClick={() => openPanel('sign-in')}>
+                  SIGN IN
+                </ArcadeButton>
+                <ArcadeButton variant="secondary" size="sm" className="w-full" disabled={isBusy} onClick={() => openPanel('sign-up')}>
+                  SIGN UP
+                </ArcadeButton>
+              </div>
+            </section>
+          </>
+        ) : (
+          <>
+            <section
+              aria-label={panel === 'sign-up' ? 'Sign up' : 'Sign in'}
+              className="flex flex-col items-start gap-5 lg:col-start-1 lg:row-start-2 lg:row-span-2"
+            >
+              <ArcadeButton variant="secondary" size="sm" onClick={backToMenu}>
                 BACK
               </ArcadeButton>
-
               {panel === 'sign-up' ? (
-                <SignUp
-                  routing="hash"
-                  signInUrl="/login"
-                  forceRedirectUrl="/"
-                  signInForceRedirectUrl="/"
-                />
+                <SignUp routing="hash" signInUrl="/login" forceRedirectUrl="/" signInForceRedirectUrl="/" />
               ) : (
-                <SignIn
-                  routing="hash"
-                  signUpUrl="/signup"
-                  forceRedirectUrl="/"
-                  signUpForceRedirectUrl="/"
-                />
+                <SignIn routing="hash" signUpUrl="/signup" forceRedirectUrl="/" signUpForceRedirectUrl="/" />
               )}
-
               <ServerStatusLine />
-            </div>
-          )}
-        </div>
+            </section>
 
-        {/* Right: the gameplay loop, shown before anyone commits */}
-        <TitleVignette />
+            <div className="lg:col-start-2 lg:row-start-1 lg:row-span-3">
+              <TitleVignette />
+            </div>
+          </>
+        )}
       </div>
     </main>
   );

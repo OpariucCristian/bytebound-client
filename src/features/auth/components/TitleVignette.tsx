@@ -149,7 +149,7 @@ export const TitleVignette = () => {
   }
 
   return (
-    <figure className="w-full">
+    <figure className="w-full cursor-default select-none">
       <figcaption className="sr-only">
         A demo fight: answer a question right and your hero strikes; answer
         wrong and the enemy hits back.
@@ -157,11 +157,15 @@ export const TitleVignette = () => {
 
       <div aria-hidden="true" className="flex flex-col gap-3">
         {/* Battle scene, as in the game */}
-        <div className="relative h-44 border-2 overflow-hidden">
+        <div className="arcade-border relative h-40 sm:h-44 lg:h-[19rem] overflow-hidden">
           <div
             className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-[center_85%] opacity-90"
             style={{ imageRendering: "pixelated" }}
           />
+          {/* Sets the stage apart from the cave behind the page */}
+          <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.6)]" />
+
+          <p className="absolute top-0 left-0 mt-2 ml-3 text-xs text-accent arcade-glow">DEMO</p>
 
           <div className="absolute top-0 right-0 mt-2 mr-2">
             <p className="text-end text-xs">Demon</p>
@@ -218,14 +222,20 @@ export const TitleVignette = () => {
         </div>
         <div className="grid grid-cols-2 gap-3">
           {question.answers.map((answer, i) => {
-            const picked = answered && i === question.pick;
+            const isPick = i === question.pick;
+            const picked = answered && isPick;
+            // Late in the "ask" beat the demo player hovers their choice
+            const hovering = !answered && isPick && t >= 9;
             return (
               <div
                 key={answer}
                 className={cn(
-                  "bg-primary text-primary-foreground px-3 py-2 text-center text-xs leading-relaxed transition-all duration-150",
+                  // Card-toned so PLAY NOW stays the only white button on screen
+                  "bg-card text-foreground border-2 border-border px-3 py-2 text-center text-xs leading-relaxed transition-all duration-150",
                   "shadow-[0_4px_0_0_hsl(var(--border))]",
-                  picked && "translate-y-1 shadow-none brightness-75",
+                  hovering && "border-accent text-accent",
+                  picked && "translate-y-1 shadow-none",
+                  picked && (question.correct ? "border-neon-green text-neon-green" : "border-red-500 text-red-500"),
                   answered && !picked && "opacity-50",
                 )}
               >
@@ -235,6 +245,9 @@ export const TitleVignette = () => {
           })}
         </div>
       </div>
+      <p aria-hidden="true" className="mt-4 text-xs leading-relaxed text-muted-foreground">
+        Answer right, you strike. Answer wrong, it strikes back.
+      </p>
     </figure>
   );
 };
