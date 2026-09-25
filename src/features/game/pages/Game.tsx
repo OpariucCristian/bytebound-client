@@ -344,43 +344,48 @@ const GameRun = ({ onRetry }: GameRunProps) => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
-      <div className="w-[60rem] mx-auto">
+    <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
+      {/*
+        Phones put the fight right under the HUD and the answers last, within
+        thumb reach, so every hit lands on screen. Desktop keeps the fight below
+        the stats.
+      */}
+      <div className="w-full max-w-[60rem] mx-auto flex flex-col">
         {/* Header */}
         {battleAction !== "start-game" && (
           <>
-            {" "}
             <div
-              className={`flex justify-between items-center mb-6 transition-opacity duration-1000 ${
+              className={`order-1 grid grid-cols-3 gap-y-2 md:flex md:justify-between md:items-start mb-4 md:mb-6 transition-opacity duration-1000 ${
                 battleAction === "idle" ? "animate-in fade-in" : ""
               }`}
             >
-              <div className="w-40">
-                <p className="text-muted-foreground text-sm">ENDLESS</p>
+              <div className="col-span-3 flex items-center justify-between md:block md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">ENDLESS</p>
                 <LivesBar
-                  className="mt-2"
+                  className="md:mt-2"
+                  size="responsive"
                   lives={game.playerLives}
                   maxLives={player.hero.baseHealth}
                 />
               </div>
-              <div className="text-center w-40">
-                <p className="text-muted-foreground text-sm">TIME</p>
+              <div className="md:text-center md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">TIME</p>
                 <p
-                  className={`text-2xl text-accent ${
+                  className={`text-lg sm:text-2xl text-accent ${
                     questionCountDown < 4 ? "text-destructive" : ""
                   }`}
                 >
                   {questionCountDown}
                 </p>
               </div>
-              <div className="text-center w-40">
-                <p className="text-muted-foreground text-sm">STREAK</p>
-                <p className="text-2xl text-accent">{stats.streak}</p>
+              <div className="text-center md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">STREAK</p>
+                <p className="text-lg sm:text-2xl text-accent">{stats.streak}</p>
               </div>
-              <div className="text-right w-40">
-                <p className="text-muted-foreground text-sm">DIFFICULTY</p>
+              <div className="text-right md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">DIFFICULTY</p>
                 <p
-                  className={`text-2xl text-${getDifficultColor(
+                  className={`text-lg sm:text-2xl text-${getDifficultColor(
                     currentQuestion.difficulty,
                   )}`}
                 >
@@ -394,26 +399,26 @@ const GameRun = ({ onRetry }: GameRunProps) => {
               answers={currentQuestion.answers}
               onSelect={handleAnswerSelect}
               disabled={isUiLocked}
-              className={`transition-opacity duration-1000 ${
+              className={`order-3 md:order-2 transition-opacity duration-1000 ${
                 battleAction === "idle" ? "animate-in fade-in" : ""
               }`}
             />
             {/* Stats */}
             <div
-              className={`mt-6 flex justify-around transition-opacity duration-500 ${
+              className={`order-4 md:order-3 mt-6 flex justify-around transition-opacity duration-500 ${
                 battleAction === "idle" ? "animate-in fade-in" : ""
               }`}
             >
               <div className="text-center">
-                <p className="text-neon-green text-2xl">{stats.correct}</p>
+                <p className="text-neon-green text-xl sm:text-2xl">{stats.correct}</p>
                 <p className="text-muted-foreground text-xs">CORRECT</p>
               </div>
               <div className="text-center">
-                <p className="text-destructive text-2xl">{stats.wrong}</p>
+                <p className="text-destructive text-xl sm:text-2xl">{stats.wrong}</p>
                 <p className="text-muted-foreground text-xs">WRONG</p>
               </div>
               <div className="text-center">
-                <p className="text-accent text-2xl">{stats.totalXp}</p>
+                <p className="text-accent text-xl sm:text-2xl">{stats.totalXp}</p>
                 <p className="text-muted-foreground text-xs">XP EARNED</p>
               </div>
             </div>
@@ -424,8 +429,8 @@ const GameRun = ({ onRetry }: GameRunProps) => {
         <div
           className={`transition-all ease-out ${
             battleAction === "start-game"
-              ? "fixed inset-0 flex items-center justify-center"
-              : "mt-8"
+              ? "fixed inset-0 flex items-center justify-center p-4"
+              : "order-2 md:order-4 mb-4 md:mb-0 md:mt-8"
           }`}
           style={{ transitionDuration: "1500ms" }}
         >

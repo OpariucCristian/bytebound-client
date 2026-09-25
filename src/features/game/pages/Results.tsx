@@ -82,10 +82,10 @@ const Results = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
+      <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-primary mb-4">GAME OVER</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl text-primary mb-4">GAME OVER</h1>
           <p className="text-xl text-secondary"></p>
         </div>
 
@@ -95,7 +95,7 @@ const Results = () => {
             <ArcadeCard glow={false} className="mb-8">
               <div className="space-y-6">
                 <div className="text-center">
-                  <h2 className="text-5xl text-accent mb-2">
+                  <h2 className="text-4xl sm:text-5xl text-accent mb-2">
                     +{gameStats?.xpGained} XP
                   </h2>
                   <p className="text-muted-foreground">TOTAL EARNED</p>

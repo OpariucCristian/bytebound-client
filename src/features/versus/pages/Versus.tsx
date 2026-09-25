@@ -90,7 +90,7 @@ const Versus = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
+    <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
       <div className="w-full max-w-[60rem] mx-auto space-y-8">
         {state.match && state.summary ? (
           <VersusResults

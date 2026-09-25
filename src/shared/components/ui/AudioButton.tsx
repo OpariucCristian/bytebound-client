@@ -6,9 +6,9 @@ export const AudioButton = () => {
   const showReminder = !hasInteracted;
   
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end">
+    <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-[max(0.75rem,env(safe-area-inset-right))] sm:bottom-4 sm:right-4 z-40 flex flex-col items-end">
       <Button
-        className="w-12 h-12 p-2 backdrop-blur-md border relative"
+        className="w-11 h-11 sm:w-12 sm:h-12 p-2 backdrop-blur-md border relative"
         onClick={isAudioPlaying ? stopAudio : startAudio}
       >
         <img
@@ -27,8 +27,9 @@ export const AudioButton = () => {
           </span>
         )}
       </Button>
+      {/* Phones keep just the pulsing dot, so the pill never covers the answers */}
       {showReminder && (
-        <div className="relative mt-2 bg-black/80 backdrop-blur-md border border-yellow-500/50 rounded-lg px-3 py-2 text-xs text-yellow-200 whitespace-nowrap animate-pulse flex items-center gap-2">
+        <div className="relative mt-2 hidden sm:flex short:hidden bg-black/80 backdrop-blur-md border border-yellow-500/50 rounded-lg px-3 py-2 text-xs text-yellow-200 whitespace-nowrap animate-pulse items-center gap-2">
           <span>Click to enable audio</span>
           <button
             onClick={(e) => {

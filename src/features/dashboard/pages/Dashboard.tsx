@@ -91,15 +91,16 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
-      <div className="w-[60rem] mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
+      <div className="w-full max-w-[60rem] mx-auto">
+        {/* Header: logo over the actions on phones, side by side from sm up */}
+        <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 mb-4">
           <img
             src="/resources/images/logo-long.png"
-            className="inline h-12 w-64 md:h-12 mr-4"
+            alt="ByteBound"
+            className="h-auto w-56 sm:h-12 sm:w-64"
           />
-          <div className="flex space-x-5">
+          <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-3 sm:gap-5">
             {player.hero && (
               <div onClick={() => setIsHeroSelectModalOpen(true)}>
                 <HeroIcon hero={(player as Player)?.hero} />
@@ -128,13 +129,13 @@ const Dashboard = () => {
             <div className="flex justify-between items-center gap-6">
               <div className="min-w-0">
                 <p className="text-muted-foreground text-sm">PLAYER</p>
-                <h2 className="text-2xl text-secondary break-words">
+                <h2 className="text-xl sm:text-2xl text-secondary break-words">
                   {user.username}
                 </h2>
               </div>
               <div className="text-right">
                 <p className="text-muted-foreground text-sm">LEVEL</p>
-                <h2 className="text-4xl text-accent">{player.lvl}</h2>
+                <h2 className="text-3xl sm:text-4xl text-accent">{player.lvl}</h2>
               </div>
             </div>
 
@@ -148,20 +149,20 @@ const Dashboard = () => {
               <Progress value={xpPercentage} className="h-4" />
             </div>
 
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t-2 border-border">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t-2 border-border">
               <div>
                 <p className="text-muted-foreground text-xs">TOTAL XP</p>
-                <p className="text-xl text-foreground">{xp}</p>
+                <p className="text-lg sm:text-xl text-foreground">{xp}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">NEXT LEVEL</p>
-                <p className="text-xl text-foreground">
+                <p className="text-lg sm:text-xl text-foreground">
                   {isMaxLevel ? "MAX LEVEL" : `${neededXp - xp} XP`}
                 </p>
               </div>
-              <div className="text-right">
+              <div className="col-span-2 sm:col-span-1 sm:text-right">
                 <p className="text-muted-foreground text-xs">1V1 W / L / D</p>
-                <p className="text-xl text-foreground">
+                <p className="text-lg sm:text-xl text-foreground whitespace-nowrap">
                   {versusStats
                     ? `${versusStats.wins} / ${versusStats.losses} / ${versusStats.draws}`
                     : "-"}

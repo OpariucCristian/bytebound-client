@@ -73,7 +73,7 @@ export default function BattleScene({
   }, [enemy.spriteKey]);
 
   return (
-    <div className="relative w-full max-w-[60rem] h-40 sm:h-48 md:h-52 border-2 overflow-hidden">
+    <div className="relative w-full max-w-[60rem] h-40 sm:h-48 md:h-52 short:h-32 border-2 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 bg-[url('/resources/backgrounds/cave.png')] bg-cover bg-bottom opacity-90"

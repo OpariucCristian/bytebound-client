@@ -117,7 +117,7 @@ export default function Enemy({
         enemyAttacking && !isTransitioning ? "-translate-x-4" : "translate-x-0",
         !hasIntroStarted
           ? "right-0 sm:right-4 lg-custom:right-6 md:right-8"
-          : "right-48 sm:right-64 lg-custom:right-80 md:right-56",
+          : "right-[14%] sm:right-[22%] lg-custom:right-80 md:right-56",
         isTransitioning && "opacity-0"
       )}
       style={{

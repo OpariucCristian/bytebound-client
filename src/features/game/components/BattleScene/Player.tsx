@@ -93,14 +93,15 @@ export default function Player({
   const playerAttacking = action === BattleActionEnum.PLAYER_ATTACK;
   const isRight = side === "right";
 
-  // The hero walks in from its edge of the scene.
+  // The hero walks in from its edge of the scene. Below md the offsets are
+  // percentages, so both fighters keep their side on narrow screens.
   const position = isRight
     ? !hasIntroStarted
-      ? "right-20 sm:right-28 lg-custom:right-32 md:right-36"
-      : "right-48 sm:right-64 lg-custom:right-80 md:right-56"
+      ? "right-0 sm:right-[6%] lg-custom:right-32 md:right-36"
+      : "right-[14%] sm:right-[22%] lg-custom:right-80 md:right-56"
     : !hasIntroStarted
-      ? "left-20 sm:left-28 lg-custom:left-32 md:left-36"
-      : "left-48 sm:left-64 lg-custom:left-80 md:left-56";
+      ? "left-0 sm:left-[6%] lg-custom:left-32 md:left-36"
+      : "left-[14%] sm:left-[22%] lg-custom:left-80 md:left-56";
 
   const playerSize = sprites.size || 128;
   const playerBottomOffset = sprites.bottomOffset ?? 0;

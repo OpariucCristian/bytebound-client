@@ -51,10 +51,10 @@ const CategorySelect = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
-      <div className="w-[60rem] mx-auto flex flex-col gap-12">
+    <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
+      <div className="w-full max-w-[60rem] mx-auto flex flex-col gap-8 md:gap-12">
         <div>
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center gap-4 mb-6 md:mb-8">
             <h1 className="text-2xl md:text-4xl text-primary">
               SELECT CATEGORY
             </h1>
@@ -67,7 +67,7 @@ const CategorySelect = () => {
             </ArcadeButton>
           </div>
 
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-3 sm:gap-4 mb-6 md:mb-8">
             <p className="text-sm text-muted-foreground">ENDLESS</p>
             {(Object.keys(PLAY_STYLES) as PlayStyle[]).map((style) => (
               <ArcadeButton

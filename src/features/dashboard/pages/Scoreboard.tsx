@@ -37,13 +37,14 @@ const Scoreboard = () => {
 
 
     return (
-        <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
-            <div className="w-[60rem] mx-auto">
+        <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
+            <div className="w-full max-w-[60rem] mx-auto">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center gap-4 mb-4">
                     <img
                         src="/resources/images/logo-long.png"
-                        className="inline h-12 w-64 md:h-12 mr-4"
+                        alt="ByteBound"
+                        className="h-auto w-44 sm:h-12 sm:w-64"
                     />
 
                     <div className="flex space-x-5">
@@ -56,9 +57,9 @@ const Scoreboard = () => {
                 {/* Player Stats */}
 
                 {/* Main Menu */}
-                <ArcadeCard>
+                <ArcadeCard className="px-4 sm:px-6">
                     <div className="text-center space-y-6">
-                        <h3 className="text-2xl text-primary mb-8">SCOREBOARD</h3>
+                        <h3 className="text-xl sm:text-2xl text-primary mb-8">SCOREBOARD</h3>
 
                         <div className="min-h-72 flex items-center justify-center">
                             {isLoading ? (
@@ -92,18 +93,18 @@ const Scoreboard = () => {
                                 <table className="w-full max-w-xl border-collapse table-fixed">
                                     <caption className="sr-only">Best runs by correct answers</caption>
                                     <thead>
-                                        <tr className="text-xs text-muted-foreground">
-                                            <th scope="col" className="w-12 py-3 text-left">#</th>
+                                        <tr className="text-[0.625rem] sm:text-xs text-muted-foreground">
+                                            <th scope="col" className="w-8 sm:w-12 py-3 text-left">#</th>
                                             <th scope="col" className="py-3 text-left">NAME</th>
-                                            <th scope="col" className="w-24 py-3 text-right">CORRECT</th>
-                                            <th scope="col" className="w-24 py-3 text-right">STREAK</th>
+                                            <th scope="col" className="w-20 sm:w-24 pl-2 py-3 text-right">CORRECT</th>
+                                            <th scope="col" className="w-[4.5rem] sm:w-24 pl-2 py-3 text-right">STREAK</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="text-sm">
+                                    <tbody className="text-xs sm:text-sm">
                                         {scoreboardData.map((sc, index) => (
                                             <tr key={sc.gameId ?? index} className="border-t-2 border-border">
                                                 <td className="py-3 text-left tabular-nums">{index + 1}.</td>
-                                                <td className="py-3 text-left truncate" title={sc.player?.userName}>
+                                                <td className="py-3 pr-2 text-left truncate" title={sc.player?.userName}>
                                                     {sc.player?.userName ?? "Unknown"}
                                                 </td>
                                                 <td className="py-3 text-right tabular-nums">{sc.correctAnswers}</td>

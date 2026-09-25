@@ -52,7 +52,7 @@ const HeroPicker = (props: HeroPickerProps) => {
     <div className="flex flex-col items-center w-full gap-4">
       <div
         aria-busy={assignHeroMutation.isPending}
-        className={`flex flex-row justify-center items-center w-full h-96 gap-5 p-10 ${
+        className={`flex flex-col sm:flex-row justify-center items-stretch sm:items-center w-full sm:h-96 gap-4 sm:gap-5 sm:p-10 ${
           assignHeroMutation.isPending ? "opacity-50 pointer-events-none" : ""
         }`}
       >

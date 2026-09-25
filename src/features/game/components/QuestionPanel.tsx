@@ -25,12 +25,15 @@ export const QuestionPanel = ({
   className,
 }: QuestionPanelProps) => (
   <div className={className}>
-    <ArcadeCard glow={false} className="h-32 mb-6 text-center">
-      <h2 className="text-lg md:text-xl text-foreground leading-relaxed">
+    <ArcadeCard
+      glow={false}
+      className="min-h-28 md:h-32 mb-4 md:mb-6 p-4 md:p-6 flex items-center justify-center md:block text-center"
+    >
+      <h2 className="text-sm sm:text-lg md:text-xl text-foreground leading-relaxed">
         {text}
       </h2>
     </ArcadeCard>
-    <div className="grid md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3 md:gap-4">
       {answers.map((answer) => {
         const isCorrect = correctAnswerId === answer.id;
         const isWrongPick =
@@ -43,7 +46,7 @@ export const QuestionPanel = ({
             onClick={() => onSelect(answer.id)}
             disabled={disabled}
             className={cn(
-              "w-full h-auto min-h-[80px] whitespace-normal text-left",
+              "w-full h-auto min-h-[72px] md:min-h-[80px] px-3 md:px-6 text-xs md:text-sm whitespace-normal text-left",
               isCorrect &&
                 "ring-4 ring-neon-green disabled:opacity-100 animate-in fade-in",
               isWrongPick && "disabled:opacity-100",

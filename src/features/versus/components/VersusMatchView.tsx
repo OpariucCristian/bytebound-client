@@ -208,22 +208,24 @@ const VersusMatchView = ({ session, onFinished }: VersusMatchViewProps) => {
   })();
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
-      <div className="w-full max-w-[60rem] mx-auto">
+    <div className="flex justify-center items-center min-h-screen p-4 pb-20 md:p-8">
+      {/* As in solo: on phones the duel sits under the HUD, answers come last */}
+      <div className="w-full max-w-[60rem] mx-auto flex flex-col">
         {introDone && round && (
-          <div className="animate-in fade-in duration-700">
+          <>
             {/* HUD */}
-            <div className="flex justify-between items-end mb-6 gap-4">
-              <div className="w-40">
-                <p className="text-muted-foreground text-sm">ENDLESS 1V1</p>
-                <p className="text-2xl text-secondary mt-2">
+            <div className="order-1 animate-in fade-in duration-700 grid grid-cols-2 gap-y-3 md:flex md:justify-between items-end mb-4 md:mb-6 md:gap-4">
+              {/* Phones: round and forfeit on top, the counters below */}
+              <div className="order-1 md:order-none md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">ENDLESS 1V1</p>
+                <p className="text-lg sm:text-2xl text-secondary mt-1 sm:mt-2">
                   ROUND {round.round}
                 </p>
               </div>
-              <div className="text-center w-40">
-                <p className="text-muted-foreground text-sm">TIME</p>
+              <div className="order-3 md:order-none md:text-center md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">TIME</p>
                 <p
-                  className={`text-2xl ${
+                  className={`text-lg sm:text-2xl ${
                     secondsLeft !== null && secondsLeft < 4
                       ? "text-destructive"
                       : "text-accent"
@@ -232,17 +234,17 @@ const VersusMatchView = ({ session, onFinished }: VersusMatchViewProps) => {
                   {secondsLeft ?? round.seconds}
                 </p>
               </div>
-              <div className="text-center w-40">
-                <p className="text-muted-foreground text-sm">DIFFICULTY</p>
+              <div className="order-4 md:order-none text-right md:text-center md:w-40">
+                <p className="text-muted-foreground text-[0.625rem] sm:text-sm">DIFFICULTY</p>
                 <p
-                  className={`text-2xl text-${getDifficultColor(
+                  className={`text-lg sm:text-2xl text-${getDifficultColor(
                     round.difficulty,
                   )}`}
                 >
                   {round.difficulty}
                 </p>
               </div>
-              <div className="w-40 flex justify-end">
+              <div className="order-2 md:order-none md:w-40 flex justify-end">
                 <ArcadeButton
                   variant="danger"
                   size="sm"
@@ -255,41 +257,45 @@ const VersusMatchView = ({ session, onFinished }: VersusMatchViewProps) => {
             </div>
 
             {/* Question and answers, hidden until both players are ready */}
-            {roundEndsAt ? (
-              <QuestionPanel
-                key={round.round}
-                className="animate-in fade-in duration-300"
-                text={round.question.text}
-                answers={round.question.answers}
-                onSelect={handleAnswerSelect}
-                disabled={isUiLocked}
-                correctAnswerId={roundResult?.correctAnswerId}
-                selectedAnswerId={selectedAnswerId}
-              />
-            ) : (
-              <ArcadeCard
-                glow={false}
-                className="h-32 mb-6 flex items-center justify-center"
-              >
-                <p className="text-lg text-muted-foreground animate-blink">
-                  ROUND {round.round}: GET READY...
-                </p>
-              </ArcadeCard>
-            )}
+            <div className="order-3 md:order-2 animate-in fade-in duration-700">
+              {roundEndsAt ? (
+                <QuestionPanel
+                  key={round.round}
+                  className="animate-in fade-in duration-300"
+                  text={round.question.text}
+                  answers={round.question.answers}
+                  onSelect={handleAnswerSelect}
+                  disabled={isUiLocked}
+                  correctAnswerId={roundResult?.correctAnswerId}
+                  selectedAnswerId={selectedAnswerId}
+                />
+              ) : (
+                <ArcadeCard
+                  glow={false}
+                  className="min-h-28 md:h-32 mb-4 md:mb-6 flex items-center justify-center text-center"
+                >
+                  <p className="text-sm sm:text-lg text-muted-foreground animate-blink">
+                    ROUND {round.round}: GET READY...
+                  </p>
+                </ArcadeCard>
+              )}
 
-            <p
-              className="h-6 mt-4 text-center text-xs text-muted-foreground"
-              aria-live="polite"
-            >
-              {answerError ?? status}
-            </p>
-          </div>
+              <p
+                className="h-6 mt-4 text-center text-xs text-muted-foreground"
+                aria-live="polite"
+              >
+                {answerError ?? status}
+              </p>
+            </div>
+          </>
         )}
 
         {/* Duel, centered on screen during the intro */}
         <div
           className={`transition-all ease-out ${
-            introDone ? "mt-4" : "fixed inset-0 flex items-center justify-center p-4"
+            introDone
+              ? "order-2 md:order-3 mb-4 md:mb-0 md:mt-4"
+              : "fixed inset-0 flex items-center justify-center p-4"
           }`}
           style={{ transitionDuration: "1500ms" }}
         >

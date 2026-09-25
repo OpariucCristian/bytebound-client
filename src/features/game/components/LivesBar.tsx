@@ -3,7 +3,8 @@ import { cn } from "@/shared/lib/utils";
 interface LivesBarProps {
   lives: number;
   maxLives: number;
-  size?: "sm" | "md";
+  /** "responsive" is small on phones and md from the sm breakpoint up. */
+  size?: "sm" | "md" | "responsive";
   /** Fill from the right, for a HUD on the right side of the screen. */
   reverse?: boolean;
   className?: string;
@@ -20,7 +21,9 @@ export const LivesBar = ({
   <div
     className={cn(
       "flex",
-      size === "md" ? "gap-2" : "gap-0.5",
+      size === "md" && "gap-2",
+      size === "sm" && "gap-0.5",
+      size === "responsive" && "gap-1 sm:gap-2",
       reverse && "flex-row-reverse",
       className,
     )}
@@ -36,7 +39,11 @@ export const LivesBar = ({
             : "/resources/hud/heart-empty.png"
         }
         alt=""
-        className={size === "md" ? "w-9 h-9" : "w-5 h-5"}
+        className={cn(
+          size === "md" && "w-9 h-9",
+          size === "sm" && "w-5 h-5",
+          size === "responsive" && "w-6 h-6 sm:w-9 sm:h-9",
+        )}
         style={{ imageRendering: "pixelated" }}
       />
     ))}
