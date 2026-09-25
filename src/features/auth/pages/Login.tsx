@@ -96,94 +96,98 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
           : 'PLAY NOW';
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 pt-10 pb-24">
-      <div className="w-full max-w-[34rem] flex flex-col items-center">
-        <h1 className="w-full flex justify-center">
-          <img
-            src="/resources/images/login.png"
-            alt="ByteBound"
-            className="w-[min(100%,20rem)]"
-          />
-        </h1>
-        <p className="mt-4 text-sm text-muted-foreground">LEVEL UP YOUR SKILLS</p>
+    <main className="min-h-screen flex items-center justify-center px-4 pt-10 pb-24 lg:px-8">
+      <div className="w-full max-w-[34rem] lg:max-w-[72rem] grid gap-10 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-16 lg:items-center">
+        {/* Left: title and the ways in */}
+        <div className="w-full flex flex-col items-center">
+          <h1 className="w-full flex justify-center">
+            <img
+              src="/resources/images/login.png"
+              alt="ByteBound"
+              className="w-[min(100%,20rem)]"
+            />
+          </h1>
+          <p className="mt-4 text-sm text-muted-foreground">LEVEL UP YOUR SKILLS</p>
 
-        {panel === 'menu' ? (
-          <div className="mt-8 w-full flex flex-col gap-6">
-            <TitleVignette />
-
-            <ArcadeCard className="flex flex-col gap-4">
-              <ArcadeButton
-                variant="primary"
-                size="lg"
-                className="w-full"
-                disabled={isBusy}
-                onClick={user?.isGuest ? () => navigate('/') : () => void playAsGuest()}
-              >
-                <span aria-live="polite" className={isBusy ? 'animate-blink motion-reduce:animate-none' : undefined}>
-                  {playLabel}
-                </span>
-              </ArcadeButton>
-              <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                {user?.isGuest
-                  ? 'Pick up where you left off.'
-                  : "No account needed. Guest runs aren't saved or ranked."}
-              </p>
-
-              {error && (
-                <p role="alert" className="text-center text-xs leading-relaxed text-destructive">
-                  {error}
+          {panel === 'menu' ? (
+            <div className="mt-8 w-full flex flex-col gap-6">
+              <ArcadeCard className="flex flex-col gap-4">
+                <ArcadeButton
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  disabled={isBusy}
+                  onClick={user?.isGuest ? () => navigate('/') : () => void playAsGuest()}
+                >
+                  <span aria-live="polite" className={isBusy ? 'animate-blink motion-reduce:animate-none' : undefined}>
+                    {playLabel}
+                  </span>
+                </ArcadeButton>
+                <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                  {user?.isGuest
+                    ? 'Pick up where you left off.'
+                    : "No account needed. Guest runs aren't saved or ranked."}
                 </p>
+
+                {error && (
+                  <p role="alert" className="text-center text-xs leading-relaxed text-destructive">
+                    {error}
+                  </p>
+                )}
+
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-border">
+                  <ArcadeButton
+                    variant="secondary"
+                    size="sm"
+                    className="w-full"
+                    disabled={isBusy}
+                    onClick={() => openPanel('sign-in')}
+                  >
+                    SIGN IN
+                  </ArcadeButton>
+                  <ArcadeButton
+                    variant="secondary"
+                    size="sm"
+                    className="w-full"
+                    disabled={isBusy}
+                    onClick={() => openPanel('sign-up')}
+                  >
+                    SIGN UP
+                  </ArcadeButton>
+                </div>
+              </ArcadeCard>
+
+              <ServerStatusLine />
+            </div>
+          ) : (
+            <div className="mt-8 w-full flex flex-col items-center gap-5">
+              <ArcadeButton variant="secondary" size="sm" className="self-start" onClick={backToMenu}>
+                BACK
+              </ArcadeButton>
+
+              {panel === 'sign-up' ? (
+                <SignUp
+                  routing="hash"
+                  signInUrl="/login"
+                  forceRedirectUrl="/"
+                  signInForceRedirectUrl="/"
+                />
+              ) : (
+                <SignIn
+                  routing="hash"
+                  signUpUrl="/signup"
+                  forceRedirectUrl="/"
+                  signUpForceRedirectUrl="/"
+                />
               )}
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-border">
-                <ArcadeButton
-                  variant="secondary"
-                  size="sm"
-                  className="w-full"
-                  disabled={isBusy}
-                  onClick={() => openPanel('sign-in')}
-                >
-                  SIGN IN
-                </ArcadeButton>
-                <ArcadeButton
-                  variant="secondary"
-                  size="sm"
-                  className="w-full"
-                  disabled={isBusy}
-                  onClick={() => openPanel('sign-up')}
-                >
-                  SIGN UP
-                </ArcadeButton>
-              </div>
-            </ArcadeCard>
+              <ServerStatusLine />
+            </div>
+          )}
+        </div>
 
-            <ServerStatusLine />
-          </div>
-        ) : (
-          <div className="mt-8 w-full flex flex-col items-center gap-5">
-            <ArcadeButton variant="secondary" size="sm" className="self-start" onClick={backToMenu}>
-              BACK
-            </ArcadeButton>
-
-            {panel === 'sign-up' ? (
-              <SignUp
-                routing="hash"
-                signInUrl="/login"
-                forceRedirectUrl="/"
-                signInForceRedirectUrl="/"
-              />
-            ) : (
-              <SignIn
-                routing="hash"
-                signUpUrl="/signup"
-                forceRedirectUrl="/"
-                signUpForceRedirectUrl="/"
-              />
-            )}
-
-            <ServerStatusLine />
-          </div>
-        )}
+        {/* Right: the gameplay loop, shown before anyone commits */}
+        <TitleVignette />
       </div>
     </main>
   );

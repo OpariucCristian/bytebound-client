@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import Dashboard from './Dashboard';
+import { LoadingScreen } from '@/shared/components/LoadingScreen';
 
 const Index = () => {
   const { user, isLoading } = useAuth();
@@ -14,11 +15,7 @@ const Index = () => {
   }, [user, isLoading, navigate]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-2xl text-primary animate-blink">LOADING...</h2>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!user) return null;

@@ -18,7 +18,12 @@ const Scoreboard = () => {
 
     const [currentPage, setCurrentPage] = useState<number>(0);
 
-    const { data: scoreboardData } = useQuery({
+    const {
+        data: scoreboardData,
+        isLoading,
+        error,
+        refetch,
+    } = useQuery({
         queryKey: ["scoreboard", currentPage],
         queryFn: () => getScoreboard(currentPage),
         enabled: !!user?.id,
@@ -55,25 +60,59 @@ const Scoreboard = () => {
                     <div className="text-center space-y-6">
                         <h3 className="text-2xl text-primary mb-8">SCOREBOARD</h3>
 
-                        <div className="h-72 flex items-center justify-center">
-                            <table className="w-full max-w-xl border-collapse">
-                                <thead>
-                                    <tr >
-                                        <th></th>
-                                        <th>Name</th>
-                                        <th>Correct</th>
-                                        <th>Max streak</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody className="">
-                               
-                                    {scoreboardData?.map((sc, index) => {
-                                        return <tr className="m-5"><td><p>{index + 1}.</p></td><td><p>{sc.player.userName}</p></td><td> <p>{sc.correctAnswers}</p></td><td> <p>{sc.correctAnswersStreakMax}</p></td> </tr>
-                                    })}
-                                  
-                                </tbody>
-                            </table>
+                        <div className="min-h-72 flex items-center justify-center">
+                            {isLoading ? (
+                                <p role="status" className="text-primary animate-blink motion-reduce:animate-none">
+                                    LOADING SCORES...
+                                </p>
+                            ) : error ? (
+                                <div role="alert" className="space-y-6">
+                                    <p className="text-sm leading-relaxed text-muted-foreground">
+                                        {error.message}
+                                    </p>
+                                    <ArcadeButton variant="primary" onClick={() => void refetch()}>
+                                        TRY AGAIN
+                                    </ArcadeButton>
+                                </div>
+                            ) : !scoreboardData?.length ? (
+                                <div className="space-y-6">
+                                    <p className="text-sm leading-relaxed text-foreground">
+                                        No runs on the board yet.
+                                    </p>
+                                    <p className="text-xs leading-relaxed text-muted-foreground">
+                                        {user?.isGuest
+                                            ? "Guest runs aren't ranked. Sign up to claim the top spot."
+                                            : "Finish a run to claim the top spot."}
+                                    </p>
+                                    <ArcadeButton variant="primary" onClick={() => navigate("/category")}>
+                                        START GAME
+                                    </ArcadeButton>
+                                </div>
+                            ) : (
+                                <table className="w-full max-w-xl border-collapse table-fixed">
+                                    <caption className="sr-only">Best runs by correct answers</caption>
+                                    <thead>
+                                        <tr className="text-xs text-muted-foreground">
+                                            <th scope="col" className="w-12 py-3 text-left">#</th>
+                                            <th scope="col" className="py-3 text-left">NAME</th>
+                                            <th scope="col" className="w-24 py-3 text-right">CORRECT</th>
+                                            <th scope="col" className="w-24 py-3 text-right">STREAK</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-sm">
+                                        {scoreboardData.map((sc, index) => (
+                                            <tr key={sc.gameId ?? index} className="border-t-2 border-border">
+                                                <td className="py-3 text-left tabular-nums">{index + 1}.</td>
+                                                <td className="py-3 text-left truncate" title={sc.player?.userName}>
+                                                    {sc.player?.userName ?? "Unknown"}
+                                                </td>
+                                                <td className="py-3 text-right tabular-nums">{sc.correctAnswers}</td>
+                                                <td className="py-3 text-right tabular-nums">{sc.correctAnswersStreakMax}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
 
 

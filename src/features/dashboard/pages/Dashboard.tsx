@@ -22,6 +22,8 @@ import HeroCard from "../components/HeroCard";
 import HeroPicker from "../components/HeroPicker";
 import HeroIcon from "../components/HeroIcon";
 import { GuestNotice } from "@/features/auth/components/GuestNotice";
+import { ErrorPanel } from "@/shared/components/ErrorPanel";
+import { LoadingScreen } from "@/shared/components/LoadingScreen";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -29,10 +31,15 @@ const Dashboard = () => {
   const { changeTrack } = useMusic();
   const { isAudioPlaying } = useAudio();
 
-  const { data: player, isLoading } = useQuery({
+  const {
+    data: player,
+    isLoading,
+    error: playerError,
+    refetch: refetchPlayer,
+  } = useQuery({
     queryKey: playerQueryKeys.byUid(user?.id || ""),
     queryFn: () => getPlayerByUid(),
-    
+
     enabled: !!user?.id,
   });
 
@@ -42,7 +49,11 @@ const Dashboard = () => {
     enabled: !!user?.id,
   });
 
-  const xpPercentage = (player?.xp / player?.neededXp) * 100;
+  const xp = player?.xp ?? 0;
+  // No neededXp means the player is at the top level
+  const neededXp = player?.neededXp ?? 0;
+  const isMaxLevel = !!player && neededXp <= 0;
+  const xpPercentage = isMaxLevel ? 100 : Math.min(100, (xp / neededXp) * 100);
 
   const [isHeroSelectModalOpen, setIsHeroSelectModalOpen] = useState<boolean>(
     false,
@@ -55,12 +66,29 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-  if (!isLoading && !player?.hero?.id) {
+  // Only once we know the player: a failed load isn't "no hero yet"
+  if (player && !player.hero?.id) {
     setIsHeroSelectModalOpen(true);
   }
-}, [isLoading, player?.hero?.id]);
+}, [player]);
 
   if (!user) return null;
+
+  if (playerError) {
+    return (
+      <ErrorPanel
+        fullScreen
+        title="COULDN'T LOAD YOUR PLAYER"
+        message={playerError.message}
+        action={{ label: "TRY AGAIN", onClick: () => void refetchPlayer() }}
+        secondaryAction={{ label: user.isGuest ? "EXIT" : "LOGOUT", onClick: () => void logout() }}
+      />
+    );
+  }
+
+  if (isLoading || !player) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
@@ -72,7 +100,7 @@ const Dashboard = () => {
             className="inline h-12 w-64 md:h-12 mr-4"
           />
           <div className="flex space-x-5">
-            {!isLoading && player.hero && (
+            {player.hero && (
               <div onClick={() => setIsHeroSelectModalOpen(true)}>
                 <HeroIcon hero={(player as Player)?.hero} />
               </div>
@@ -97,16 +125,16 @@ const Dashboard = () => {
         {/* Player Stats */}
         <ArcadeCard glow={false} className="mb-8">
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div>
+            <div className="flex justify-between items-center gap-6">
+              <div className="min-w-0">
                 <p className="text-muted-foreground text-sm">PLAYER</p>
-                <h2 className="text-2xl text-secondary">
+                <h2 className="text-2xl text-secondary break-words">
                   {user.username}
                 </h2>
               </div>
               <div className="text-right">
                 <p className="text-muted-foreground text-sm">LEVEL</p>
-                <h2 className="text-4xl text-accent">{player?.lvl}</h2>
+                <h2 className="text-4xl text-accent">{player.lvl}</h2>
               </div>
             </div>
 
@@ -114,8 +142,7 @@ const Dashboard = () => {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-foreground">XP</span>
                 <span className="text-muted-foreground">
-                  {player?.xp}{" "}
-                  {player?.neededXp ? ` / ${player?.neededXp}` : ""} XP
+                  {isMaxLevel ? `${xp} XP` : `${xp} / ${neededXp} XP`}
                 </span>
               </div>
               <Progress value={xpPercentage} className="h-4" />
@@ -124,12 +151,12 @@ const Dashboard = () => {
             <div className="grid grid-cols-3 gap-4 pt-4 border-t-2 border-border">
               <div>
                 <p className="text-muted-foreground text-xs">TOTAL XP</p>
-                <p className="text-xl text-foreground">{player?.xp}</p>
+                <p className="text-xl text-foreground">{xp}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">NEXT LEVEL</p>
                 <p className="text-xl text-foreground">
-                  {player?.neededXp - player?.xp} XP
+                  {isMaxLevel ? "MAX LEVEL" : `${neededXp - xp} XP`}
                 </p>
               </div>
               <div className="text-right">

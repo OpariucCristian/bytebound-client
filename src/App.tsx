@@ -19,8 +19,19 @@ import { AudioButton } from "@/shared/components/ui/AudioButton";
 import { AudioProvider } from "@/shared/contexts/AudioContext";
 import { SoundEffectProvider } from "@/shared/contexts/SoundEffectContext";
 import Scoreboard from "./features/dashboard/pages/Scoreboard";
+import { ApiError } from "@/shared/services/httpService";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // A 4xx won't change on retry; show it right away. Network hiccups and
+      // server errors get two more tries.
+      retry: (failureCount, error) =>
+        !(error instanceof ApiError && error.status >= 400 && error.status < 500) &&
+        failureCount < 2,
+    },
+  },
+});
 
 interface AppProps {
   clerkPublishableKey: string;

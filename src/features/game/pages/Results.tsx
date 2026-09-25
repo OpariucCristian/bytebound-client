@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { ArcadeButton } from "@/shared/components/ArcadeButton";
@@ -7,6 +6,8 @@ import { ArcadeCard } from "@/shared/components/ArcadeCard";
 import { getPlayerByUid, playerQueryKeys } from "@/shared/services/playerService";
 import { getGameStats, gameQueryKeys } from "@/shared/services/gameService";
 import { GuestNotice } from "@/features/auth/components/GuestNotice";
+import { ErrorPanel } from "@/shared/components/ErrorPanel";
+import { LoadingScreen } from "@/shared/components/LoadingScreen";
 
 interface LocationState {
   gameId: string;
@@ -20,25 +21,65 @@ const Results = () => {
 
   const state = location.state as LocationState;
 
-  const { data: playerData, error: playerError } = useQuery({
+  const {
+    data: playerData,
+    error: playerError,
+    refetch: refetchPlayer,
+  } = useQuery({
     queryKey: playerQueryKeys.byUid(user?.id || ""),
     queryFn: () => getPlayerByUid(),
     enabled: !!user?.id,
   });
 
-  const { data: gameStats, error: gameStatsError } = useQuery({
+  const {
+    data: gameStats,
+    error: gameStatsError,
+    refetch: refetchStats,
+  } = useQuery({
     queryKey: gameQueryKeys.stats(state?.gameId || ""),
     queryFn: () => getGameStats(state?.gameId || ""),
     enabled: !!state?.gameId,
   });
 
-  useEffect(() => {
-    if (!state || !user || playerError || gameStatsError) {
-      navigate("/");
-    }
-  }, [state, user, navigate, gameStats, playerData]);
+  const toMainMenu = { label: "MAIN MENU", onClick: () => navigate("/") };
 
-  if (!state || !user || gameStatsError || playerError) return null;
+  if (!user) return null;
+
+  // Opened directly or after a refresh: the run to show isn't known
+  if (!state?.gameId) {
+    return (
+      <ErrorPanel
+        fullScreen
+        title="NO RESULTS TO SHOW"
+        message="Results appear right after a run ends. Start a run to get some."
+        action={{ label: "START GAME", onClick: () => navigate("/category") }}
+        secondaryAction={toMainMenu}
+      />
+    );
+  }
+
+  const loadError = gameStatsError ?? playerError;
+  if (loadError) {
+    return (
+      <ErrorPanel
+        fullScreen
+        title="COULDN'T LOAD YOUR RESULTS"
+        message={loadError.message}
+        action={{
+          label: "TRY AGAIN",
+          onClick: () => {
+            void refetchStats();
+            void refetchPlayer();
+          },
+        }}
+        secondaryAction={toMainMenu}
+      />
+    );
+  }
+
+  if (!gameStats || !playerData) {
+    return <LoadingScreen label="TALLYING YOUR RUN..." />;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 md:p-8">
@@ -66,7 +107,7 @@ const Results = () => {
                       {gameStats?.correctAnswers}
                     </p>
                     <p className="text-muted-foreground text-sm">
-                      QUESTIONS ANSWERED
+                      CORRECT ANSWERS
                     </p>
                   </div>
                   <div className="text-center">
@@ -88,7 +129,7 @@ const Results = () => {
                 <div className="pt-6 border-t-2 border-border">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-muted-foreground text-sm">NEW LEVEL</p>
+                      <p className="text-muted-foreground text-sm">LEVEL</p>
                       <p className="text-3xl text-accent">{playerData.lvl}</p>
                     </div>
                     <div className="text-right">

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArcadeButton } from "@/shared/components/ArcadeButton";
+import { ErrorPanel } from "@/shared/components/ErrorPanel";
+import { LoadingScreen } from "@/shared/components/LoadingScreen";
 import BattleScene from "@/features/game/components/BattleScene/BattleScene";
 import { LivesBar } from "@/features/game/components/LivesBar";
 import { QuestionPanel } from "@/features/game/components/QuestionPanel";
@@ -33,10 +34,24 @@ interface GameStats {
   totalXp: number;
 }
 
-const Game = () => {
+/** Turns a socket failure into something a player can act on. */
+const describeGameError = (err: unknown): string => {
+  const message = err instanceof Error ? err.message : String(err);
+  if (/timed out/i.test(message)) {
+    return "The game server took too long to answer. It may still be waking up.";
+  }
+  return message || "Something went wrong with this run.";
+};
+
+interface GameRunProps {
+  /** Throws this run away and starts a fresh one on a new connection. */
+  onRetry: () => void;
+}
+
+const GameRun = ({ onRetry }: GameRunProps) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const mode = searchParams.get("mode"); // 'endless'
   const category = searchParams.get("category");
   const { changeTrack } = useMusic();
@@ -74,7 +89,12 @@ const Game = () => {
     },
   });
 
-  const { data: player, isLoading } = useQuery({
+  const {
+    data: player,
+    isLoading: isPlayerLoading,
+    error: playerError,
+    refetch: refetchPlayer,
+  } = useQuery({
     queryKey: playerQueryKeys.byUid(user?.id || ""),
     queryFn: () => getPlayerByUid(),
 
@@ -101,7 +121,7 @@ const Game = () => {
       setGame(newGame);
     } catch (err) {
       console.error("Failed to start game:", err);
-      setGameError(err instanceof Error ? err.message : String(err));
+      setGameError(describeGameError(err));
     } finally {
       setIsStarting(false);
     }
@@ -173,7 +193,7 @@ const Game = () => {
       applyAnswerResult(result);
     } catch (err) {
       console.error("Failed to check answer:", err);
-      setGameError(err instanceof Error ? err.message : String(err));
+      setGameError(describeGameError(err));
     } finally {
       setIsAwaitingServer(false);
     }
@@ -263,31 +283,63 @@ const Game = () => {
       }
     } catch (err) {
       console.error("Failed to fetch next question:", err);
-      setGameError(err instanceof Error ? err.message : String(err));
+      setGameError(describeGameError(err));
     } finally {
       setIsAwaitingServer(false);
     }
   };
 
-  const loading = isStarting;
-  const error = gameError || session.connectionError;
+  const connectionError = session.connectionError;
+  const toMainMenu = { label: "MAIN MENU", onClick: () => navigate("/") };
 
-  if (loading) {
+  if (connectionError?.kind === "unauthorized") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-2xl text-primary animate-blink">LOADING...</h2>
-      </div>
+      <ErrorPanel
+        fullScreen
+        title="SESSION EXPIRED"
+        message={connectionError.message}
+        action={{ label: "SIGN IN", onClick: () => void logout() }}
+      />
     );
   }
 
-  if (error) {
+  if (connectionError || gameError) {
+    const started = !!game?.id;
     return (
-      <div className="min-h-screen flex items-center justify-center flex-col gap-4">
-        <h2 className="text-2xl text-destructive">{error}</h2>
-        <ArcadeButton onClick={() => navigate("/category")}>
-          Back to Category Select
-        </ArcadeButton>
-      </div>
+      <ErrorPanel
+        fullScreen
+        title={started ? "RUN INTERRUPTED" : "COULDN'T START THE RUN"}
+        message={connectionError?.message ?? gameError}
+        action={{ label: started ? "START A NEW RUN" : "TRY AGAIN", onClick: onRetry }}
+        secondaryAction={toMainMenu}
+      />
+    );
+  }
+
+  if (playerError) {
+    return (
+      <ErrorPanel
+        fullScreen
+        title="COULDN'T LOAD YOUR HERO"
+        message={playerError.message}
+        action={{ label: "TRY AGAIN", onClick: () => void refetchPlayer() }}
+        secondaryAction={toMainMenu}
+      />
+    );
+  }
+
+  if (isStarting || isPlayerLoading || !game || !currentQuestion) {
+    return <LoadingScreen label="ENTERING THE CAVE..." />;
+  }
+
+  if (!player?.hero) {
+    return (
+      <ErrorPanel
+        fullScreen
+        title="NO HERO YET"
+        message="Pick a hero on the main menu before heading into the cave."
+        action={{ label: "PICK A HERO", onClick: () => navigate("/") }}
+      />
     );
   }
 
@@ -390,6 +442,15 @@ const Game = () => {
       </div>
     </div>
   );
+};
+
+/**
+ * A run lives on one socket connection that can't be resumed, so retrying
+ * remounts the run with a fresh connection.
+ */
+const Game = () => {
+  const [attempt, setAttempt] = useState(0);
+  return <GameRun key={attempt} onRetry={() => setAttempt((a) => a + 1)} />;
 };
 
 export default Game;

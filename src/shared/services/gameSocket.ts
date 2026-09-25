@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { API_BASE_URL, getAuthToken } from "./httpService";
+import { waitForServer } from "./serverStatus";
 import type {
   AnswerResultDto,
   CreateNewGameDto,
@@ -22,7 +23,8 @@ interface Ack<T> {
   error?: string;
 }
 
-const REQUEST_TIMEOUT_MS = 10000;
+/** Per request, once connected. The first queries after a wake can be slow. */
+const REQUEST_TIMEOUT_MS = 20000;
 
 // The socket server runs on the same host as the REST API, unless overridden.
 const SOCKET_URL =
@@ -44,9 +46,37 @@ export const createGameSocket = () => {
     },
     // The server can't resume a game on a new connection, so we don't retry.
     reconnection: false,
+    // Connect once the server is awake (see connect below), not on creation.
+    autoConnect: false,
   });
 
+  let connection: Promise<void> | null = null;
+
+  /**
+   * Wakes the server if it's asleep, then opens the socket. Requests wait for
+   * this, so a cold start is a longer wait instead of a timeout.
+   */
+  const connect = (): Promise<void> => {
+    if (!connection) {
+      connection = waitForServer().then(
+        () =>
+          new Promise<void>((resolve, reject) => {
+            if (socket.connected) return resolve();
+            socket.once("connect", () => resolve());
+            socket.once("connect_error", (err) => reject(err));
+            socket.connect();
+          }),
+      );
+      // A failed attempt can be retried by calling connect again.
+      connection.catch(() => {
+        connection = null;
+      });
+    }
+    return connection;
+  };
+
   const request = async <T>(event: string, payload?: unknown): Promise<T> => {
+    await connect();
     const ack: Ack<T> = await socket
       .timeout(REQUEST_TIMEOUT_MS)
       .emitWithAck(event, payload);
@@ -58,6 +88,7 @@ export const createGameSocket = () => {
 
   return {
     socket,
+    connect,
     startGame: (data: CreateNewGameDto) =>
       request<ReadNewGameDto>(GameEvents.Start, data),
     /** Tells the server the question is on screen, which starts its clock. */

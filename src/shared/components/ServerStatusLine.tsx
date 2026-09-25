@@ -58,13 +58,6 @@ export const ServerStatusLine = ({ className }: { className?: string }) => {
         </div>
       )}
 
-      {state === "ready" && (
-        <div aria-hidden="true" className="flex items-center gap-3 text-muted-foreground">
-          <span className="h-2 w-2 bg-neon-green" />
-          SERVER READY
-        </div>
-      )}
-
       {state === "unreachable" && (
         <div className="flex flex-wrap items-center justify-between gap-3 text-foreground">
           <span aria-hidden="true">THE SERVER ISN'T ANSWERING</span>
