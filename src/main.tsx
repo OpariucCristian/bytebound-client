@@ -1,6 +1,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { waitForServer } from "./shared/services/serverStatus";
+
+// The API sleeps when idle; start waking it before anyone presses a button.
+void waitForServer();
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const root = createRoot(document.getElementById("root")!);

@@ -1,10 +1,13 @@
 import { getToken } from "@clerk/react";
+import { API_BASE_URL } from "./apiConfig";
+import { guestSession } from "./guestSession";
 
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5165/api/";
+export { API_BASE_URL };
 
-// Clerk refreshes the short-lived session token as needed
-export const getAuthToken = (): Promise<string | null> => getToken();
+// Clerk refreshes the short-lived session token as needed. Signed-out players
+// may be on a guest session instead.
+export const getAuthToken = async (): Promise<string | null> =>
+  (await getToken().catch(() => null)) ?? guestSession.getToken();
 
 const buildHeaders = async (): Promise<Headers> => {
   const headers = new Headers();

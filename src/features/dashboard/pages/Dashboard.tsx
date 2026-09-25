@@ -21,6 +21,7 @@ import Dialog from "@/shared/components/ui/Modal";
 import HeroCard from "../components/HeroCard";
 import HeroPicker from "../components/HeroPicker";
 import HeroIcon from "../components/HeroIcon";
+import { GuestNotice } from "@/features/auth/components/GuestNotice";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -84,10 +85,14 @@ const Dashboard = () => {
               SCOREBOARD
             </ArcadeButton>
             <ArcadeButton variant="danger" size="sm" onClick={logout}>
-              LOGOUT
+              {user.isGuest ? "EXIT" : "LOGOUT"}
             </ArcadeButton>
           </div>
         </div>
+
+        {user.isGuest && (
+          <GuestNotice title={`PLAYING AS ${user.username.toUpperCase()}`} className="mb-6" />
+        )}
 
         {/* Player Stats */}
         <ArcadeCard glow={false} className="mb-8">
