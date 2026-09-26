@@ -7,6 +7,9 @@ export interface Category {
 /** Question categories that have content on the server. */
 export const CATEGORIES: Category[] = [
   { id: "dsa", name: "DATA STRUCTURES", color: "text-primary" },
+  { id: "typescript", name: "TYPESCRIPT / JS", color: "text-primary" },
+  { id: "csharp", name: "C#", color: "text-primary" },
+  { id: "cpp", name: "C++", color: "text-primary" },
 ];
 
 export const getCategoryName = (id: string | null | undefined) =>
