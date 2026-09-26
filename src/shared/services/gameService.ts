@@ -34,6 +34,23 @@ export interface ReadNewGameDto {
   playerLives: number;
   enemyLives: number;
   enemy: Enemy;
+  skills: RunSkill[];
+}
+
+/** A skill of the player's hero, with its state in the current run. */
+export interface RunSkill {
+  id: string;
+  /** Stable identifier, e.g. "shields_up"; picks the icon and effects. */
+  key: string;
+  name: string | null;
+  description: string | null;
+  unlockAtLvl: number;
+  /** The player's level is high enough to use it. */
+  unlocked: boolean;
+  /** Already spent this run (each skill is usable once per run). */
+  used: boolean;
+  /** Protecting the current question. */
+  active: boolean;
 }
 
 export interface QuestionPoolDto {
@@ -60,6 +77,8 @@ export interface AnswerResultDto {
   playerLives: number;
   enemyLives: number;
   gameOver: boolean;
+  /** A wrong answer whose damage an active skill blocked. */
+  blocked: boolean;
 }
 
 export interface GameStatsDto {

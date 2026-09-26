@@ -6,6 +6,7 @@ import type {
   CreateNewGameDto,
   QuestionPoolDto,
   ReadNewGameDto,
+  RunSkill,
 } from "./gameService";
 
 // Must match the events in the server's games.gateway.ts
@@ -14,6 +15,7 @@ export const GameEvents = {
   QuestionReady: "game:question_ready",
   Answer: "game:answer",
   NextQuestion: "game:next_question",
+  UseSkill: "game:use_skill",
   QuestionTimeout: "game:question_timeout",
 } as const;
 
@@ -96,6 +98,9 @@ export const createGameSocket = () => {
     submitAnswer: (answerId: string) =>
       request<AnswerResultDto>(GameEvents.Answer, { answerId }),
     nextQuestion: () => request<QuestionPoolDto>(GameEvents.NextQuestion),
+    /** Activates a skill for the current question; returns the updated skills. */
+    activateSkill: (skillId: string) =>
+      request<RunSkill[]>(GameEvents.UseSkill, { skillId }),
     onQuestionTimeout: (handler: (result: AnswerResultDto) => void) => {
       socket.on(GameEvents.QuestionTimeout, handler);
       return () => {

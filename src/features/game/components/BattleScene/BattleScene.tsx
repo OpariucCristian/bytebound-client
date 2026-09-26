@@ -18,6 +18,8 @@ interface BattleSceneProps {
   questionDifficulty?: number;
   hero: Hero;
   enemy: Enemy & { enemyLives?: number };
+  /** Key of the skill protecting the hero this question, if any. */
+  activeSkillKey?: string | null;
 }
 
 export default function BattleScene({
@@ -26,6 +28,7 @@ export default function BattleScene({
   questionDifficulty,
   hero,
   enemy,
+  activeSkillKey = null,
 }: BattleSceneProps) {
   const [playerIntroComplete, setPlayerIntroComplete] = useState(false);
   const [enemyIntroComplete, setEnemyIntroComplete] = useState(false);
@@ -116,6 +119,7 @@ export default function BattleScene({
         action={action}
         sprites={player_sprites}
         onIntroComplete={() => setPlayerIntroComplete(true)}
+        activeSkillKey={activeSkillKey}
       />
 
       <div>
@@ -136,11 +140,16 @@ export default function BattleScene({
           <p
             className={cn(
               "text-xl font-bold arcade-text animate-pulse motion-reduce:animate-none",
-              action === "player-attack" ? "text-neon-green" : "text-destructive",
+              action === BattleActionEnum.PLAYER_ATTACK
+                ? "text-neon-green"
+                : action === BattleActionEnum.PLAYER_BLOCK
+                  ? "text-accent"
+                  : "text-destructive",
             )}
           >
             {action === BattleActionEnum.PLAYER_ATTACK && "CORRECT ANSWER!"}
             {action === BattleActionEnum.ENEMY_ATTACK && "WRONG ANSWER!"}
+            {action === BattleActionEnum.PLAYER_BLOCK && "BLOCKED!"}
             {action === BattleActionEnum.ENEMY_WIN && "ENEMY WINS!"}
             {action === BattleActionEnum.START_GAME && "BATTLE START!"}
             {action === BattleActionEnum.DIFFICULTY_CHANGE && "NEW ENEMY!"}

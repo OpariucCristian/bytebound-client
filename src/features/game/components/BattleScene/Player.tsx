@@ -14,7 +14,19 @@ interface PlayerProps {
   side?: "left" | "right";
   /** Plays no sounds and leaves the music alone (e.g. the opponent in 1v1). */
   muted?: boolean;
+  /** Key of the skill protecting the hero, drawn as an effect around it. */
+  activeSkillKey?: string | null;
 }
+
+/** The effect drawn around the hero while a skill protects it. */
+const SKILL_AURAS: Record<string, string> = {
+  // A golden shield glow
+  shields_up:
+    "rounded-full bg-yellow-300/15 ring-2 ring-yellow-300/70 shadow-[0_0_24px_4px_rgba(253,224,71,0.5)]",
+  // A translucent block of ice
+  ice_block:
+    "rounded-sm bg-sky-200/30 border-2 border-sky-100/80 shadow-[inset_0_0_16px_rgba(186,230,253,0.9),0_0_16px_rgba(125,211,252,0.5)]",
+};
 
 export default function Player({
   action,
@@ -22,6 +34,7 @@ export default function Player({
   onIntroComplete,
   side = "left",
   muted = false,
+  activeSkillKey = null,
 }: PlayerProps) {
   const [hasIntroStarted, setHasIntroStarted] = useState(false);
 
@@ -131,6 +144,15 @@ export default function Player({
           transform: isRight ? "scaleX(-1)" : undefined,
         }}
       />
+      {activeSkillKey && (
+        <div
+          aria-hidden
+          className={cn(
+            "absolute inset-x-[22%] top-[28%] bottom-0 pointer-events-none animate-in fade-in zoom-in-90 duration-300",
+            SKILL_AURAS[activeSkillKey] ?? "rounded-full ring-2 ring-accent/70",
+          )}
+        />
+      )}
 
     </div>
   );

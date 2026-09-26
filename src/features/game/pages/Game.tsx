@@ -6,10 +6,12 @@ import { LoadingScreen } from "@/shared/components/LoadingScreen";
 import BattleScene from "@/features/game/components/BattleScene/BattleScene";
 import { LivesBar } from "@/features/game/components/LivesBar";
 import { QuestionPanel } from "@/features/game/components/QuestionPanel";
+import { SkillBar } from "@/features/game/components/SkillBar";
 import {
   ReadNewGameDto,
   type AnswerResultDto,
   type QuestionPoolDto,
+  type RunSkill,
   gameQueryKeys,
 } from "@/shared/services/gameService";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
@@ -26,6 +28,7 @@ import { useMusic } from "@/shared/hooks";
 import { MusicTracks } from "@/shared/utils/musicUtils";
 import { getPlayerByUid, playerQueryKeys } from "@/shared/services";
 import { CHARACTER_SPRITES } from "@/shared/utils/spriteConfigs";
+import { useSoundEffect } from "@/shared/contexts/SoundEffectContext";
 
 interface GameStats {
   correct: number;
@@ -55,6 +58,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
   const mode = searchParams.get("mode"); // 'endless'
   const category = searchParams.get("category");
   const { changeTrack } = useMusic();
+  const { playSoundEffect } = useSoundEffect();
 
   const [game, setGame] = useState<ReadNewGameDto | null>(null);
   const [currentQuestion, setCurrentQuestion] =
@@ -74,6 +78,8 @@ const GameRun = ({ onRetry }: GameRunProps) => {
   const [isStarting, setIsStarting] = useState(false);
   const [isAwaitingServer, setIsAwaitingServer] = useState(false);
   const [gameError, setGameError] = useState<string | null>(null);
+  const [skills, setSkills] = useState<RunSkill[]>([]);
+  const [isUsingSkill, setIsUsingSkill] = useState(false);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasAnsweredRef = useRef<boolean>(false);
 
@@ -119,6 +125,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
       changeTrack(MusicTracks.BATTLE_1);
       setCurrentQuestion(newGame.firstQuestion);
       setGame(newGame);
+      setSkills(newGame.skills ?? []);
     } catch (err) {
       console.error("Failed to start game:", err);
       setGameError(describeGameError(err));
@@ -199,6 +206,25 @@ const GameRun = ({ onRetry }: GameRunProps) => {
     }
   };
 
+  const handleSkillUse = async (skillId: string) => {
+    if (!game?.id || isUiLocked || isUsingSkill) return;
+
+    setIsUsingSkill(true);
+    try {
+      setSkills(await session.activateSkill(skillId));
+      if (player?.hero) {
+        playSoundEffect?.(
+          `/resources/characters/player/${player.hero.spriteKey}/sounds/power_up.wav`,
+        );
+      }
+    } catch (err) {
+      // A rejected skill (e.g. the answer beat it to the server) doesn't end the run.
+      console.error("Failed to use skill:", err);
+    } finally {
+      setIsUsingSkill(false);
+    }
+  };
+
   const applyAnswerResult = (result: AnswerResultDto) => {
     if (result.correct) {
       setBattleAction(BattleActionEnum.PLAYER_ATTACK);
@@ -214,7 +240,9 @@ const GameRun = ({ onRetry }: GameRunProps) => {
       setBattleAction(
         result.gameOver
           ? BattleActionEnum.ENEMY_WIN
-          : BattleActionEnum.ENEMY_ATTACK,
+          : result.blocked
+            ? BattleActionEnum.PLAYER_BLOCK
+            : BattleActionEnum.ENEMY_ATTACK,
       );
       setStats((prev) => ({
         ...prev,
@@ -275,6 +303,8 @@ const GameRun = ({ onRetry }: GameRunProps) => {
 
       setCurrentQuestion(nextQuestion);
       hasAnsweredRef.current = false;
+      // A skill only lasts for the question it was used on.
+      setSkills((prev) => prev.map((s) => ({ ...s, active: false })));
 
       // After a difficulty change, the question is shown once the new
       // enemy's intro finishes (handleIntroComplete).
@@ -289,6 +319,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
     }
   };
 
+  const activeSkill = skills.find((s) => s.active) ?? null;
   const connectionError = session.connectionError;
   const toMainMenu = { label: "MAIN MENU", onClick: () => navigate("/") };
 
@@ -357,6 +388,11 @@ const GameRun = ({ onRetry }: GameRunProps) => {
           {battleAction === BattleActionEnum.PLAYER_ATTACK && "Correct answer. Your hero strikes."}
           {battleAction === BattleActionEnum.ENEMY_ATTACK &&
             `Wrong answer. ${game.playerLives} ${game.playerLives === 1 ? "life" : "lives"} left.`}
+          {battleAction === BattleActionEnum.PLAYER_BLOCK &&
+            `Wrong answer, but ${activeSkill?.name ?? "your skill"} blocked the damage.`}
+          {battleAction === BattleActionEnum.IDLE &&
+            activeSkill &&
+            `${activeSkill.name} active. A wrong answer won't cost lives.`}
           {battleAction === BattleActionEnum.ENEMY_WIN && "Wrong answer. You are out of lives."}
           {battleAction === BattleActionEnum.DIFFICULTY_CHANGE && "Enemy defeated. A new enemy appears."}
           {battleAction === BattleActionEnum.IDLE && questionCountDown === 5 && "5 seconds left."}
@@ -453,6 +489,15 @@ const GameRun = ({ onRetry }: GameRunProps) => {
               questionDifficulty={currentQuestion?.difficulty}
               hero={player.hero}
               enemy={{...game.enemy, enemyLives: currentQuestion.enemyLives}}
+              activeSkillKey={activeSkill?.key}
+            />
+          )}
+          {battleAction !== "start-game" && (
+            <SkillBar
+              skills={skills}
+              onUse={handleSkillUse}
+              disabled={isUiLocked || isUsingSkill}
+              className="mt-3 animate-in fade-in"
             />
           )}
         </div>

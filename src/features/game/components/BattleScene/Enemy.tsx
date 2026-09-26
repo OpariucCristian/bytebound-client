@@ -78,6 +78,7 @@ export default function Enemy({
         }
         return;
       case BattleActionEnum.ENEMY_ATTACK:
+      case BattleActionEnum.PLAYER_BLOCK:
       case BattleActionEnum.ENEMY_WIN:
         updateSpriteAnimation(sprites.ATTACK);
         return;
@@ -109,7 +110,9 @@ export default function Enemy({
   const enemyFlip = sprites.flipHorizontal || false;
   const enemyBottomOffset = sprites.bottomOffset ?? 8;
 
-  const enemyAttacking = action === BattleActionEnum.ENEMY_ATTACK;
+  const enemyAttacking =
+    action === BattleActionEnum.ENEMY_ATTACK ||
+    action === BattleActionEnum.PLAYER_BLOCK;
   return (
     <div
       className={cn(
@@ -126,7 +129,7 @@ export default function Enemy({
         transitionDuration:
           !isTransitioning &&
           hasIntroStarted &&
-          action !== BattleActionEnum.ENEMY_ATTACK
+          !enemyAttacking
             ? "2000ms"
             : "150ms",
         transitionTimingFunction: "ease-out",
