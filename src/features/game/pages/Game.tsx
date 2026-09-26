@@ -29,6 +29,7 @@ import { MusicTracks } from "@/shared/utils/musicUtils";
 import { getPlayerByUid, playerQueryKeys } from "@/shared/services";
 import { CHARACTER_SPRITES } from "@/shared/utils/spriteConfigs";
 import { useSoundEffect } from "@/shared/contexts/SoundEffectContext";
+import { hasSkillAssets, skillBlockSoundSrc } from "@/features/game/utils/skillUtils";
 
 interface GameStats {
   correct: number;
@@ -80,6 +81,8 @@ const GameRun = ({ onRetry }: GameRunProps) => {
   const [gameError, setGameError] = useState<string | null>(null);
   const [skills, setSkills] = useState<RunSkill[]>([]);
   const [isUsingSkill, setIsUsingSkill] = useState(false);
+  // Wrong answers of the current question that a skill took off the board
+  const [removedAnswerIds, setRemovedAnswerIds] = useState<string[]>([]);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasAnsweredRef = useRef<boolean>(false);
 
@@ -211,7 +214,28 @@ const GameRun = ({ onRetry }: GameRunProps) => {
 
     setIsUsingSkill(true);
     try {
-      setSkills(await session.activateSkill(skillId));
+      const result = await session.activateSkill(skillId);
+      setSkills(result.skills);
+      if (result.removedAnswerIds) {
+        setRemovedAnswerIds(result.removedAnswerIds);
+      }
+      if (result.extraSeconds) {
+        const extra = result.extraSeconds;
+        setQuestionCountDown((prev) => prev + extra);
+      }
+      if (result.playerLives !== undefined) {
+        const lives = result.playerLives;
+        setGame((prev) => ({ ...prev, playerLives: lives }));
+      }
+      if (result.question) {
+        setRemovedAnswerIds([]);
+        setCurrentQuestion({
+          ...result.question,
+          answers: shuffleArray(result.question.answers),
+        });
+        // A new question gets a fresh countdown and server clock
+        showQuestion();
+      }
       if (player?.hero) {
         playSoundEffect?.(
           `/resources/characters/player/${player.hero.spriteKey}/sounds/power_up.wav`,
@@ -237,6 +261,10 @@ const GameRun = ({ onRetry }: GameRunProps) => {
         totalXp: prev.totalXp + baseXp,
       }));
     } else {
+      const blockingSkill = result.blocked ? skills.find((s) => s.active) : null;
+      if (blockingSkill && hasSkillAssets(blockingSkill.key)) {
+        playSoundEffect?.(skillBlockSoundSrc(blockingSkill.key));
+      }
       setBattleAction(
         result.gameOver
           ? BattleActionEnum.ENEMY_WIN
@@ -303,6 +331,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
 
       setCurrentQuestion(nextQuestion);
       hasAnsweredRef.current = false;
+      setRemovedAnswerIds([]);
       // A skill only lasts for the question it was used on.
       setSkills((prev) => prev.map((s) => ({ ...s, active: false })));
 
@@ -320,6 +349,13 @@ const GameRun = ({ onRetry }: GameRunProps) => {
   };
 
   const activeSkill = skills.find((s) => s.active) ?? null;
+  const skillUnavailableReason = (skill: RunSkill) =>
+    skill.key === "second_wind" &&
+    game &&
+    player?.hero &&
+    game.playerLives >= player.hero.baseHealth
+      ? "Already at full health."
+      : null;
   const connectionError = session.connectionError;
   const toMainMenu = { label: "MAIN MENU", onClick: () => navigate("/") };
 
@@ -392,7 +428,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
             `Wrong answer, but ${activeSkill?.name ?? "your skill"} blocked the damage.`}
           {battleAction === BattleActionEnum.IDLE &&
             activeSkill &&
-            `${activeSkill.name} active. A wrong answer won't cost lives.`}
+            `${activeSkill.name} active. ${activeSkill.description ?? ""}`}
           {battleAction === BattleActionEnum.ENEMY_WIN && "Wrong answer. You are out of lives."}
           {battleAction === BattleActionEnum.DIFFICULTY_CHANGE && "Enemy defeated. A new enemy appears."}
           {battleAction === BattleActionEnum.IDLE && questionCountDown === 5 && "5 seconds left."}
@@ -445,6 +481,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
               answers={currentQuestion.answers}
               onSelect={handleAnswerSelect}
               disabled={isUiLocked}
+              removedAnswerIds={removedAnswerIds}
               className={`order-3 md:order-2 transition-opacity duration-1000 ${
                 battleAction === "idle" ? "animate-in fade-in" : ""
               }`}
@@ -497,6 +534,7 @@ const GameRun = ({ onRetry }: GameRunProps) => {
               skills={skills}
               onUse={handleSkillUse}
               disabled={isUiLocked || isUsingSkill}
+              unavailableReason={skillUnavailableReason}
               className="mt-3 animate-in fade-in"
             />
           )}

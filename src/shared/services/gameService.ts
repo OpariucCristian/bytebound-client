@@ -47,10 +47,28 @@ export interface RunSkill {
   unlockAtLvl: number;
   /** The player's level is high enough to use it. */
   unlocked: boolean;
+  /**
+   * Applies as soon as it's used. Otherwise it stays active on the current
+   * question until it's answered, and only one can be active at a time.
+   */
+  instant: boolean;
   /** Already spent this run (each skill is usable once per run). */
   used: boolean;
-  /** Protecting the current question. */
+  /** Pending on the current question. */
   active: boolean;
+}
+
+/** The outcome of using a skill, beyond the updated skill states. */
+export interface UseSkillResult {
+  skills: RunSkill[];
+  /** Wrong answers of the current question to take off the board. */
+  removedAnswerIds?: string[];
+  /** Seconds added to the current question's answer window. */
+  extraSeconds?: number;
+  /** The question that replaces the current one, with a fresh timer. */
+  question?: QuestionPoolDto;
+  /** The player's lives after healing. */
+  playerLives?: number;
 }
 
 export interface QuestionPoolDto {
