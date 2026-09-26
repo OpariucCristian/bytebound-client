@@ -140,10 +140,15 @@ const Dashboard = () => {
                   {user.username}
                 </p>
               </div>
-              <div className="text-right">
+              <button
+                type="button"
+                aria-label={`Level ${player.lvl}, see skill progression`}
+                className="text-right hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={() => navigate("/progression")}
+              >
                 <p className="text-muted-foreground text-sm">LEVEL</p>
                 <p className="text-3xl sm:text-4xl text-accent">{player.lvl}</p>
-              </div>
+              </button>
             </div>
 
             <div>
@@ -191,6 +196,14 @@ const Dashboard = () => {
               className="w-full"
             >
               START GAME
+            </ArcadeButton>
+
+            <ArcadeButton
+              variant="secondary"
+              onClick={() => navigate("/progression")}
+              className="w-full"
+            >
+              SKILL PROGRESSION
             </ArcadeButton>
 
             <div className="pt-8 border-t-2 border-border">

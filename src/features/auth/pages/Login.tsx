@@ -164,7 +164,7 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
                 <ArcadeButton variant="secondary" size="sm" className="w-full" disabled={isBusy} onClick={() => openPanel('sign-in')}>
                   SIGN IN
                 </ArcadeButton>
-                <ArcadeButton variant="secondary" size="sm" className="w-full" disabled={isBusy} onClick={() => openPanel('sign-up')}>
+                <ArcadeButton variant="accent" size="sm" className="w-full" disabled={isBusy} onClick={() => openPanel('sign-up')}>
                   SIGN UP
                 </ArcadeButton>
               </div>

@@ -19,7 +19,7 @@ interface SkillBarProps {
 }
 
 // Hard 2px bevel, light top-left and dark bottom-right, drawn over the icon
-const BEVEL =
+export const SKILL_SLOT_BEVEL =
   "shadow-[inset_2px_2px_0_0_rgb(255_255_255/0.2),inset_-2px_-2px_0_0_rgb(0_0_0/0.55)]";
 
 /**
@@ -97,7 +97,7 @@ export const SkillBar = ({
                     ) : (
                       <Lock className="m-auto h-5 w-5 text-muted-foreground" aria-hidden />
                     )}
-                    <span aria-hidden className={cn("pointer-events-none absolute inset-0", BEVEL)} />
+                    <span aria-hidden className={cn("pointer-events-none absolute inset-0", SKILL_SLOT_BEVEL)} />
                     {!skill.unlocked && (
                       <span
                         aria-hidden

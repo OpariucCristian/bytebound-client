@@ -36,6 +36,7 @@ const Game = lazy(() => import("@/features/game/pages/Game"));
 const Results = lazy(() => import("@/features/game/pages/Results"));
 const Versus = lazy(() => import("@/features/versus/pages/Versus"));
 const Scoreboard = lazy(() => import("@/features/dashboard/pages/Scoreboard"));
+const Progression = lazy(() => import("@/features/dashboard/pages/Progression"));
 
 const PAGE_TITLES: Record<string, string> = {
   "/login": "Play",
@@ -46,6 +47,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/results": "Game over",
   "/versus": "1v1 duel",
   "/scoreboard": "Scoreboard",
+  "/progression": "Progression",
 };
 
 /** Names each screen in the browser tab and for screen readers. */
@@ -90,6 +92,7 @@ const AppRoutes = ({ clerkPublishableKey }: AppProps) => {
                 <Route path="/results" element={<Results />} />
                 <Route path="/versus" element={<Versus />} />
                 <Route path="/scoreboard" element={<Scoreboard />} />
+                <Route path="/progression" element={<Progression />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
