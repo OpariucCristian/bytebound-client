@@ -33,6 +33,15 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
   const [panel, setPanel] = useState<Panel>(
     mode === 'sign-up' ? 'sign-up' : location.hash.length > 1 ? 'sign-in' : 'menu',
   );
+  // /login and /signup share this instance, so a route change (e.g. Clerk's
+  // "Sign in" link on the sign up form) has to switch the panel itself. A
+  // navigation can name the panel it wants in its state.
+  const [shownMode, setShownMode] = useState(mode);
+  if (mode !== shownMode) {
+    setShownMode(mode);
+    const requested = (location.state as { panel?: Panel } | null)?.panel;
+    setPanel(requested ?? mode);
+  }
   const [starting, setStarting] = useState<Starting>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -79,7 +88,7 @@ const Login = ({ mode = 'sign-in' }: LoginProps) => {
 
   const backToMenu = () => {
     if (mode === 'sign-up' || location.hash) {
-      navigate('/login', { replace: true });
+      navigate('/login', { replace: true, state: { panel: 'menu' } });
     }
     setPanel('menu');
   };

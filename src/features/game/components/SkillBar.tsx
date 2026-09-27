@@ -95,7 +95,7 @@ export const SkillBar = ({
                         fallback={<Sparkles className="m-auto h-5 w-5" aria-hidden />}
                       />
                     ) : (
-                      <Lock className="m-auto h-5 w-5 text-muted-foreground" aria-hidden />
+                      <Lock className="mx-auto mb-1 h-3 w-3 text-muted-foreground" aria-hidden />
                     )}
                     <span aria-hidden className={cn("pointer-events-none absolute inset-0", SKILL_SLOT_BEVEL)} />
                     {!skill.unlocked && (
